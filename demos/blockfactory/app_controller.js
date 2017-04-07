@@ -143,6 +143,19 @@ AppController.prototype.exportBlockLibraryToFile = function() {
   }
 };
 
+AppController.prototype.exportJSONString = function(){
+    var jsonBlockDict = this.blockLibraryController.storage.jsonBlocks;
+    var jsonBlockArray = [];
+    Object.keys(jsonBlockDict).forEach(function(key){
+        var jsonOfBlock = jsonBlockDict[key];
+        jsonBlockArray.push(jsonOfBlock);
+
+    });
+    var finalJsonString = JSON.stringify(jsonBlockArray);
+    var filename = prompt('Enter the following string in JSONProperties textbox. ', finalJsonString);
+    console.log(JSON.stringify(jsonBlockArray));
+}
+
 /**
  * Converts an object mapping block type to XML to text file for output.
  * @param {!Object} blockXmlMap Object mapping block type to XML.
@@ -480,6 +493,7 @@ AppController.prototype.assignLibraryClickHandlers = function() {
         self.blockLibraryController.removeFromBlockLibrary();
       });
 
+
   // Button for clearing the block library.
   document.getElementById('clearBlockLibraryButton').addEventListener('click',
       function() {
@@ -491,6 +505,8 @@ AppController.prototype.assignLibraryClickHandlers = function() {
       function() {
         self.openModal('dropdownDiv_blockLib');
       });
+
+
 };
 
 /**
@@ -503,6 +519,12 @@ AppController.prototype.assignBlockFactoryClickHandlers = function() {
       .addEventListener('click', function() {
         self.exportBlockLibraryToFile();
       });
+
+  document.getElementById('getJSONString')
+        .addEventListener('click', function() {
+            console.log("get json string");
+            self.exportJSONString();
+        });
 
   document.getElementById('helpButton').addEventListener('click',
       function() {

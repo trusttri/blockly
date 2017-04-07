@@ -54,6 +54,8 @@ BlockLibraryController = function(blockLibraryName, opt_blockLibraryStorage) {
   // The BlockLibraryView object handles the proper updating and formatting of
   // the block library dropdown.
   this.view = new BlockLibraryView();
+
+
 };
 
 /**
@@ -142,6 +144,7 @@ BlockLibraryController.prototype.saveToBlockLibrary = function() {
   // Create block XML.
   var xmlElement = goog.dom.createDom('xml');
   var block = FactoryUtils.getRootBlock(BlockFactory.mainWorkspace);
+  var jsonOfBlock = JSON.parse(FactoryUtils.formatJson_(blockType, block));
   xmlElement.appendChild(Blockly.Xml.blockToDomWithXY(block));
 
   // Do not add option again if block type is already in library.
@@ -150,7 +153,7 @@ BlockLibraryController.prototype.saveToBlockLibrary = function() {
   }
 
   // Save block.
-  this.storage.addBlock(blockType, xmlElement);
+  this.storage.addBlock(blockType, xmlElement, jsonOfBlock);
   this.storage.saveToLocalStorage();
 
   // Show saved block without other stray blocks sitting in Block Factory's
@@ -159,6 +162,7 @@ BlockLibraryController.prototype.saveToBlockLibrary = function() {
 
   // Add select handler to the new option.
   this.addOptionSelectHandler(blockType);
+
 };
 
 /**

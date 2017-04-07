@@ -52,12 +52,15 @@ Blockly.Blocks['factory_base'] = {
         });
     this.appendDummyInput()
         .appendField(dropdown, 'CONNECTIONS');
+
     this.appendValueInput('TOOLTIP')
         .setCheck('String')
         .appendField('tooltip');
+
     this.appendValueInput('HELPURL')
         .setCheck('String')
         .appendField('help url');
+
     this.appendValueInput('COLOUR')
         .setCheck('Colour')
         .appendField('colour');
@@ -65,6 +68,14 @@ Blockly.Blocks['factory_base'] = {
         'fields, inputs and other blocks here.');
     this.setHelpUrl(
         'https://developers.google.com/blockly/guides/create-custom-blocks/block-factory');
+    this.appendValueInput('METHOD')
+          .setCheck('String')
+          .appendField('method name');
+    this.appendStatementInput('PARAMETERS')
+          .setCheck('Input')
+          .appendField('parameters');
+
+
   },
   mutationToDom: function() {
     var container = document.createElement('mutation');
@@ -137,17 +148,30 @@ Blockly.Blocks['factory_base'] = {
 };
 
 var FIELD_MESSAGE = 'fields %1 %2';
-var FIELD_ARGS = [
+var PARAMETER_ARGS = [
   {
     "type": "field_dropdown",
-    "name": "ALIGN",
-    "options": [['left', 'LEFT'], ['right', 'RIGHT'], ['centre', 'CENTRE']],
+    "name": "TYPE",
+    "options": [['input', 'INPUT'], ['field', 'FIELD']],
   },
   {
     "type": "input_statement",
     "name": "FIELDS",
     "check": "Field"
   }
+];
+
+var FIELD_ARGS = [
+    {
+        "type": "field_dropdown",
+        "name": "ALIGN",
+        "options": [['left', 'LEFT'], ['right', 'RIGHT'], ['centre', 'CENTRE']],
+    },
+    {
+        "type": "input_statement",
+        "name": "FIELDS",
+        "check": "Field"
+    }
 ];
 
 var TYPE_MESSAGE = 'type %1';
@@ -317,6 +341,34 @@ Blockly.Blocks['field_angle'] = {
     fieldNameCheck(this);
   }
 };
+
+Blockly.Blocks['parameter'] = {
+    init: function() {
+        this.jsonInit({
+            "message0": "name %1 %2",
+            "args0": [
+                {
+                    "type": "field_input",
+                    "name": "INPUTNAME",
+                    "text": "NAME"
+                },
+                {
+                    "type": "input_dummy"
+                }
+            ],
+            "message1": "type %1",
+            "args1": PARAMETER_ARGS,
+            "previousStatement": "Input",
+            "nextStatement": "Input",
+            "colour": 210,
+            "tooltip": "A value socket for horizontal connections.",
+            "helpUrl": "https://www.youtube.com/watch?v=s2_xaEvcVI0#t=71"
+        });
+    },
+    onchange: function() {
+        inputNameCheck(this);
+    }
+}
 
 Blockly.Blocks['field_dropdown'] = {
   // Dropdown menu.

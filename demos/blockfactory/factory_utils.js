@@ -167,14 +167,32 @@ FactoryUtils.getGeneratorStub = function(block, generatorLanguage) {
  * @private
  */
 FactoryUtils.formatJson_ = function(blockType, rootBlock) {
+
   var JS = {};
   // Type is not used by Blockly, but may be used by a loader.
   JS.type = blockType;
   // Generate inputs.
   var message = [];
   var args = [];
+  var parameterArgs = [];
+
   var contentsBlock = rootBlock.getInputTargetBlock('INPUTS');
+  var parameterBlock = rootBlock.getInputTargetBlock('PARAMETERS');
+
   var lastInput = null;
+
+  while(parameterBlock){
+
+    var parameter = {};
+    parameter.name = parameterBlock.getFieldValue('INPUTNAME');
+    parameter.type = parameterBlock.getFieldValue('TYPE');
+    parameterArgs.push(parameter);
+    parameterBlock = parameterBlock.nextConnection &&
+                      parameterBlock.nextConnection.targetBlock();
+
+  }
+
+
   while (contentsBlock) {
     if (!contentsBlock.disabled && !contentsBlock.getInheritedDisabled()) {
       var fields = FactoryUtils.getFieldsJson_(
@@ -225,6 +243,11 @@ FactoryUtils.formatJson_ = function(blockType, rootBlock) {
   if (args.length) {
     JS.args0 = args;
   }
+
+  if(parameterArgs.length){
+    JS.parameters = parameterArgs;
+  }
+
   // Generate inline/external switch.
   if (rootBlock.getFieldValue('INLINE') == 'EXT') {
     JS.inputsInline = false;
@@ -266,7 +289,7 @@ FactoryUtils.formatJson_ = function(blockType, rootBlock) {
 
   JS.tooltip = FactoryUtils.getTooltipFromRootBlock_(rootBlock);
   JS.helpUrl = FactoryUtils.getHelpUrlFromRootBlock_(rootBlock);
-
+  JS.methodName = FactoryUtils.getMethodNameFromRootBlock_(rootBlock);
   return JSON.stringify(JS, null, '  ');
 };
 
@@ -286,6 +309,8 @@ FactoryUtils.formatJavaScript_ = function(blockType, rootBlock, workspace) {
   var TYPES = {'input_value': 'appendValueInput',
                'input_statement': 'appendStatementInput',
                'input_dummy': 'appendDummyInput'};
+
+
   var contentsBlock = rootBlock.getInputTargetBlock('INPUTS');
   while (contentsBlock) {
     if (!contentsBlock.disabled && !contentsBlock.getInheritedDisabled()) {
@@ -652,6 +677,8 @@ FactoryUtils.getTypesFrom_ = function(block, name) {
  */
 FactoryUtils.getRootBlock = function(workspace) {
   var blocks = workspace.getTopBlocks(false);
+
+
   for (var i = 0, block; block = blocks[i]; i++) {
     if (block.type == 'factory_base') {
       return block;
@@ -997,3 +1024,16 @@ FactoryUtils.getHelpUrlFromRootBlock_ = function(rootBlock) {
   }
   return '';
 };
+
+/**
+ *
+ * @param rootBlock
+ * @return
+ */
+FactoryUtils.getMethodNameFromRootBlock_ = function(rootBlock){
+    var methodNameBlock = rootBlock.getInputTargetBlock('METHOD');
+    if (methodNameBlock && !methodNameBlock.disabled) {
+        return methodNameBlock.getFieldValue('TEXT');
+    }
+    return '';
+}

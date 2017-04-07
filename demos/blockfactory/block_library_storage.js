@@ -40,6 +40,7 @@ goog.provide('BlockLibraryStorage');
 BlockLibraryStorage = function(blockLibraryName, opt_blocks) {
   // Add prefix to this.name to avoid collisions in local storage.
   this.name = 'BlockLibraryStorage.' + blockLibraryName;
+  this.jsonBlocks = {};
   if (!opt_blocks) {
     // Initialize this.blocks by loading from local storage.
     this.loadFromLocalStorage();
@@ -71,6 +72,7 @@ BlockLibraryStorage.prototype.loadFromLocalStorage = function() {
  */
 BlockLibraryStorage.prototype.saveToLocalStorage = function() {
   goog.global.localStorage[this.name] = JSON.stringify(this.blocks);
+
 };
 
 /**
@@ -88,9 +90,10 @@ BlockLibraryStorage.prototype.clear = function() {
  * @param {string} blockType Type of block.
  * @param {Element} blockXML The block's XML pulled from workspace.
  */
-BlockLibraryStorage.prototype.addBlock = function(blockType, blockXML) {
+BlockLibraryStorage.prototype.addBlock = function(blockType, blockXML, jsonOfBlock) {
   var prettyXml = Blockly.Xml.domToPrettyText(blockXML);
   this.blocks[blockType] = prettyXml;
+  this.jsonBlocks[blockType] = jsonOfBlock;
 };
 
 /**
@@ -99,6 +102,7 @@ BlockLibraryStorage.prototype.addBlock = function(blockType, blockXML) {
  */
 BlockLibraryStorage.prototype.removeBlock = function(blockType) {
   delete this.blocks[blockType];
+  delete this.jsonBlocks[blockType];
 };
 
 /**
