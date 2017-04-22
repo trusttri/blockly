@@ -76,7 +76,6 @@
 	Control.prototype.getBlockFromDrawer = function(cursorPosition){
 		var blockElement = Blockly.mainWorkspace.toolbox_.tree_.getChildren()[0].blocks[0];
 		this.currentBlock = new Block(Blockly.Xml.domToBlock(Blockly.mainWorkspace, blockElement), cursorPosition);
-		Blockly.mainWorkspace.toolbox_.flyout_.placeNewBlock_(this.currentBlock.blockSvg);
 		this.currentBlock.highlight();
 		this.blocks.push(this.currentBlock);
 		this.closeFlyout();
