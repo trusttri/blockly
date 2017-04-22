@@ -26,7 +26,7 @@
 			
 			var hoveringPlace = control.getHoveringPlace(cursorPosition);//hover:drawer or viewer
 			
-			if(hand.pinchStrength < 0.7){
+			if(hand.pinchStrength < 0.9){
 				if(hoveringPlace == "drawer"){
 					if(!choseBlock){
 						choseDrawer = true;
