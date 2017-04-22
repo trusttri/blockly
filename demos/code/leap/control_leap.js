@@ -9,7 +9,7 @@
 	cursorPositionUpdate = function(hand){
 		cursorPosition[0] = hand.screenPosition()[0]+offset[0];
 		cursorPosition[1] = hand.screenPosition()[1]+offset[1];//offset
-		console.log(cursorPosition[0] +" , "+cursorPosition[1]);
+		//console.log(cursorPosition[0] +" , "+cursorPosition[1]);
 	}
 	
 	checkInFlyout = function(cursorPosition){
@@ -20,7 +20,6 @@
 	}
 
 	Leap.loop({enableGestures:true}, function(frame){
-		console.log("hand");
 		hand = frame.hands[0];
 		if(hand){
 			cursorPositionUpdate(hand);
@@ -48,6 +47,7 @@
 				if(hoveringPlace == "viewer"){
 					if(!choseBlock && choseDrawer && checkInFlyout(cursorPosition)){ //need this for preventing double choosing
 						choseBlock = true;
+						console.log("placed");
 						control.getBlockFromDrawer(cursorPosition);
 						choseDrawer = false; //closed drawer
 					}else if(choseBlock && !choseDrawer){//holding block. should move it around

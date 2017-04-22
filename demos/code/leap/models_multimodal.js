@@ -5,7 +5,7 @@
 	var CATEGORY_SECTION_HEIGHT = 22; //26.55;
 	var BLOCK_CATEGORIES = ["Logic", "Loops", "Math", "Text", "Lists", "Colour", "Variables", "Functions"];
 	var category_index = -1;
-
+	var count=0;
 	Control = function(){
 		this.flyoutOpen = false;
 		this.chosenDrawer = "";
@@ -20,10 +20,10 @@
 	Control.prototype.getHoveringPlace = function(cursorPosition){
 		var currentX = cursorPosition[0];
 		if(currentX < DRAWER_BOUNDARY){
-			console.log("in drawer");
+			//console.log("in drawer");
 			return "drawer";
 		}
-		console.log("in viewer");
+		//console.log("in viewer");
 		return "viewer";
 	}
 
@@ -50,7 +50,6 @@
 		}
 		if(category_index != -1){
 			control.chosenDrawer = BLOCK_CATEGORIES[category_index];
-			console.log(control.chosenDrawer);
 			Blockly.mainWorkspace.toolbox_.tree_.getChildren()[category_index].select();
 		}
 
@@ -92,16 +91,20 @@
 	Block = function(blockSvg, cursorPosition){
 		this.blockSvg = blockSvg;
 		this.connection = blockSvg.getConnections_(false);
-		this.workspaceX = blockSvg.getRelativeToSurfaceXY()['x'];
-		this.workspaceY = blockSvg.getRelativeToSurfaceXY()['y'];
 		this.cursorX = cursorPosition[0];
 		this.cursorY = cursorPosition[1];
+		console.log("firstX"+","+this.cursorX+","+this.cursorY);
 	}
 
 	Block.prototype.move = function(cursorPosition){
+		count++;
+		console.log(count);
 		var deltaX = cursorPosition[0] - this.cursorX;
 		var deltaY = cursorPosition[1] - this.cursorY;
-		this.blockSvg.moveBy(deltaX, deltaY);
+		//update new X, Y
+		this.cursorX += deltaX;
+		this.cursorY += deltaY;
+		this.blockSvg.moveBy(deltaX, deltaY);	
 	}
 
 	Block.prototype.highlight = function(){
