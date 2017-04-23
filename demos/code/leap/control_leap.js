@@ -1,11 +1,10 @@
-
+	
 	var hand = null;
 	var cursorPosition = [0, 0];
 	var control = new Control();
 	var offset = [-250, 400]
 	var choseBlock = false;
 	var choseDrawer = false;
-	
 	cursorPositionUpdate = function(hand){
 		cursorPosition[0] = hand.screenPosition()[0]+offset[0];
 		cursorPosition[1] = hand.screenPosition()[1]+offset[1];//offset
@@ -20,6 +19,7 @@
 	}
 
 	Leap.loop({enableGestures:true}, function(frame){
+		
 		hand = frame.hands[0];
 		if(hand){
 			cursorPositionUpdate(hand);
@@ -52,6 +52,11 @@
 						choseDrawer = false; //closed drawer
 					}else if(choseBlock && !choseDrawer){//holding block. should move it around
 						control.moveHoldingBlock(cursorPosition);
+					}else if(!choseBlock && !choseDrawer){//trying to grab a new block
+						control.getBlockFromViewer(cursorPosition);
+						control.moveHoldingBlock(cursorPosition);
+						choseBlock = true;
+						
 					}
 			
 				}

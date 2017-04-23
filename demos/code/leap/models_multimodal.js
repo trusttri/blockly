@@ -5,17 +5,18 @@
 	var CATEGORY_SECTION_HEIGHT = 22; //26.55;
 	var BLOCK_CATEGORIES = ["Logic", "Loops", "Math", "Text", "Lists", "Colour", "Variables", "Functions"];
 	var category_index = -1;
-	var count=0;
+	
+	
 	Control = function(){
+	
 		this.flyoutOpen = false;
 		this.chosenDrawer = "";
 		this.blocks = [];
 		this.currentBlock = null;
 		this.chosenConnection = null;
-		
-		
-
+		this.workSpace = Blockly.mainWorkspace;
 	}
+	
 
 	Control.prototype.getHoveringPlace = function(cursorPosition){
 		var currentX = cursorPosition[0];
@@ -69,8 +70,23 @@
 
 	}
 
-	Control.prototype.getBlockFromEditor = function(cursorPosition){
-
+	Control.prototype.getBlockFromViewer = function(cursorPosition){
+		var shortestDistance = 20;
+		var optimalBlock = null;
+		this.blocks.forEach(function(block){
+			var deltaX = cursorPosition[0] - block.cursorX;
+			var deltaY = cursorPosition[1] - block.cursorY;
+			var distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+			if(distance < shortestDistance){
+				optimalBlock = block;
+				shortestDistance = distance;
+			}
+		});
+		
+		if(optimalBlock!=null){
+			this.currentBlock = optimalBlock;
+		}
+		
 	}
 	
 	Control.prototype.getBlockFromDrawer = function(cursorPosition){
@@ -85,19 +101,48 @@
 		this.currentBlock.move(cursorPosition);
 	}
 
+	Control.prototype.listenForConnection = function(){
+		
+		var candidate = this.currentBlock.getClosestConnection();
+		if(candidate != null){
+			candidate[0].connect(candidate[1]);
+		}
+	}
 
 
 	Block = function(blockSvg, cursorPosition){
 		this.blockSvg = blockSvg;
-		this.connection = blockSvg.getConnections_(false);
+		this.workSpace = blockSvg.workSpace;
+		this.connections = blockSvg.getConnections_(false);
 		this.cursorX = cursorPosition[0];
 		this.cursorY = cursorPosition[1];
 		console.log("firstX"+","+this.cursorX+","+this.cursorY);
 	}
+	
+	Block.prototype.getClosestConnection = function(){
+		var pairConnections = [];
+		this.connections.forEach(function(connection){
+			var position = this.blockSvg.getRelativeToSurfaceXY();
+			var offset = goog.math.Coordinate.difference(position, this.blockSvg.dragStartXY_);
+			var result = connection.dbOpposite_.searchForClosest(connection, 20, offset);
+			pairConnections.add([connection, result.connection, result.radius]);
+		});
+		
+		var shortestDistance = 20;
+		var optimalConnection = null;
+		pairConnections.forEach(function(pair){
+			var distance = pair[2];
+			if(distance < shortestDistance){
+				optimalConnection = [pair[0], pair[1]];
+				shortestDistance = distance;
+			}
+			
+		});
+		return [optimalConnection];
+	}
+
 
 	Block.prototype.move = function(cursorPosition){
-		count++;
-		console.log(count);
 		var deltaX = cursorPosition[0] - this.cursorX;
 		var deltaY = cursorPosition[1] - this.cursorY;
 		//update new X, Y
@@ -113,3 +158,4 @@
 	Block.prototype.unhighlight = function(){
 		
 	}
+
