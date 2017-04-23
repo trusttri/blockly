@@ -5,6 +5,7 @@
 	var offset = [-250, 400]
 	var choseBlock = false;
 	var choseDrawer = false;
+	var init = true;
 	cursorPositionUpdate = function(hand){
 		cursorPosition[0] = hand.screenPosition()[0]+offset[0];
 		cursorPosition[1] = hand.screenPosition()[1]+offset[1];//offset
@@ -19,6 +20,11 @@
 	}
 
 	Leap.loop({enableGestures:true}, function(frame){
+		if(Blockly.mainWorkspace != null && init){
+			control.getBlocksPositionInFlyout();
+			control.getRange();
+			init=false;
+		}
 		
 		hand = frame.hands[0];
 		if(hand){
@@ -36,6 +42,8 @@
 				}else{//hoveringPlace == "viewer"
 					if(!checkInFlyout(cursorPosition)){
 						control.closeFlyout();
+					}else if(Blockly.mainWorkspace.toolbox_.flyout_.isVisible() && checkInFlyout(cursorPosition) && choseDrawer){
+						control.hoverOverFlyout(cursorPosition);
 					}
 					if(choseBlock){ //let the block go
 						control.stopMovingBlock();
@@ -46,9 +54,9 @@
 				
 			}else{ //hand is grabbing for something
 				if(hoveringPlace == "viewer"){
-					if(!choseBlock && choseDrawer && checkInFlyout(cursorPosition)){ //need this for preventing double choosing
+					if(Blockly.selected!=null && choseDrawer && checkInFlyout(cursorPosition)){ //need this for preventing double choosing
 						choseBlock = true;
-						console.log("placed");
+						console.log("trying to get new");
 						control.getBlockFromDrawer(cursorPosition);
 						choseDrawer = false; //closed drawer
 					}else if(choseBlock && !choseDrawer){//holding block. should move it around

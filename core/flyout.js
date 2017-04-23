@@ -298,6 +298,8 @@ Blockly.Flyout.prototype.createDom = function(tagName) {
   return this.svgGroup_;
 };
 
+Blockly.Flyout.prototype.currentBlocks = []; 
+
 /**
  * Initializes the flyout.
  * @param {!Blockly.Workspace} targetWorkspace The workspace in which to create
@@ -822,6 +824,7 @@ Blockly.Flyout.prototype.show = function(xmlList) {
  */
 Blockly.Flyout.prototype.layout_ = function(contents, gaps) {
   this.workspace_.scale = this.targetWorkspace_.scale;
+  this.currentBlocks = [];
   var margin = this.MARGIN;
   var cursorX = this.RTL ? margin : margin + Blockly.BlockSvg.TAB_WIDTH;
   var cursorY = margin;
@@ -866,6 +869,7 @@ Blockly.Flyout.prototype.layout_ = function(contents, gaps) {
       this.backgroundButtons_[i] = rect;
 
       this.addBlockListeners_(root, block, rect);
+	  this.currentBlocks.push(block);
     } else if (item.type == 'button') {
       var button = item.button;
       var buttonSvg = button.createDom();

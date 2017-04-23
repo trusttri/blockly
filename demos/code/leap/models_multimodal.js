@@ -51,6 +51,7 @@
 		if(category_index != -1){
 			control.chosenDrawer = BLOCK_CATEGORIES[category_index];
 			Blockly.mainWorkspace.toolbox_.tree_.getChildren()[category_index].select();
+			
 		}
 
 	}
@@ -66,6 +67,19 @@
 	}
 
 	Control.prototype.hoverOverFlyout = function(cursorPosition){
+		if(cursorPosition[0] < FLYOUT_BOUNDARY){
+			var blocksBoundary = FLYOUT_RANGE[control.chosenDrawer];
+			console.log(control.chosenDrawer);
+			for(var i=0 ; i<(blocksBoundary.length-1); i++){
+				var currentY = cursorPosition[1];
+				if(blocksBoundary[i] < currentY && currentY < blocksBoundary[i+1]){
+					console.log(Blockly.mainWorkspace.toolbox_.flyout_.currentBlocks[i]);
+					Blockly.mainWorkspace.toolbox_.flyout_.currentBlocks[i].select();
+					break;
+				}			
+			}
+		}
+		
 
 	}
 
@@ -89,10 +103,13 @@
 		}
 		
 	}
+
 	
 	Control.prototype.getBlockFromDrawer = function(cursorPosition){
 		var blockElement = Blockly.mainWorkspace.toolbox_.tree_.getChildren()[0].blocks[0];
-		this.currentBlock = new Block(Blockly.Xml.domToBlock(Blockly.mainWorkspace, blockElement), cursorPosition);
+		
+		var newBlockSvg = Blockly.mainWorkspace.toolbox_.flyout_.placeNewBlock_(Blockly.selected);
+		this.currentBlock = new Block(newBlockSvg, cursorPosition);
 		this.currentBlock.highlight();
 		this.blocks.push(this.currentBlock);
 		this.closeFlyout();
@@ -134,6 +151,7 @@
 		for(var i=0 ; i<6 ; i++){
 			var precedingBound = 0;
 			var positions = FLYOUT_BLOCKS_POSITION[BLOCK_CATEGORIES[i]];
+			positions.push(-10);
 			positions.forEach(function(blockLength){
 				var thisBound = 12*2+blockLength+precedingBound
 				FLYOUT_RANGE[BLOCK_CATEGORIES[i]].push(thisBound);
@@ -141,7 +159,6 @@
 			});
 			
 		}
-		console.log(FLYOUT_RANGE);
 		
 	}
 	
@@ -181,7 +198,6 @@
 			
 		});
 
-		console.log(optimalConnection);
 		return optimalConnection;
 	}
 	
