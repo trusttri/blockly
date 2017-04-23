@@ -2,7 +2,7 @@
 	var FLYOUT_BOUNDARY = 382;
 	var DRAWER_BOUNDARY = 0;
 	var CATEGORY_STARTING_POINT = 0;//26.55;
-	var CATEGORY_SECTION_HEIGHT = 22; //26.55;
+	var CATEGORY_SECTION_HEIGHT = 40; //26.55;
 	var BLOCK_CATEGORIES = ["Logic", "Loops", "Math", "Text", "Lists", "Colour", "Variables", "Functions"];
 	var category_index = -1;
 	var FLYOUT_BLOCKS_POSITION = {"Logic":[], "Loops":[], "Math":[], "Text":[], "Lists":[], "Colour":[], "Variables":[], "Functions":[]};
@@ -69,12 +69,11 @@
 	Control.prototype.hoverOverFlyout = function(cursorPosition){
 		if(cursorPosition[0] < FLYOUT_BOUNDARY){
 			var blocksBoundary = FLYOUT_RANGE[control.chosenDrawer];
-			console.log(control.chosenDrawer);
 			for(var i=0 ; i<(blocksBoundary.length-1); i++){
 				var currentY = cursorPosition[1];
 				if(blocksBoundary[i] < currentY && currentY < blocksBoundary[i+1]){
-					console.log(Blockly.mainWorkspace.toolbox_.flyout_.currentBlocks[i]);
 					Blockly.mainWorkspace.toolbox_.flyout_.currentBlocks[i].select();
+					
 					break;
 				}			
 			}
@@ -106,13 +105,15 @@
 
 	
 	Control.prototype.getBlockFromDrawer = function(cursorPosition){
-		var blockElement = Blockly.mainWorkspace.toolbox_.tree_.getChildren()[0].blocks[0];
+		if(Blockly.mainWorkspace.toolbox_.flyout_.isVisible() && Blockly.selected != null){
+			var blockElement = Blockly.mainWorkspace.toolbox_.tree_.getChildren()[0].blocks[0];
+			var newBlockSvg = Blockly.mainWorkspace.toolbox_.flyout_.placeNewBlock_(Blockly.selected);
+			this.currentBlock = new Block(newBlockSvg, cursorPosition);
+			this.currentBlock.highlight();
+			this.blocks.push(this.currentBlock);
+			this.closeFlyout();
+		}
 		
-		var newBlockSvg = Blockly.mainWorkspace.toolbox_.flyout_.placeNewBlock_(Blockly.selected);
-		this.currentBlock = new Block(newBlockSvg, cursorPosition);
-		this.currentBlock.highlight();
-		this.blocks.push(this.currentBlock);
-		this.closeFlyout();
 	}
 	
 	Control.prototype.moveHoldingBlock = function(cursorPosition){
@@ -153,7 +154,7 @@
 			var positions = FLYOUT_BLOCKS_POSITION[BLOCK_CATEGORIES[i]];
 			positions.push(-10);
 			positions.forEach(function(blockLength){
-				var thisBound = 12*2+blockLength+precedingBound
+				var thisBound = 8*2+blockLength+precedingBound
 				FLYOUT_RANGE[BLOCK_CATEGORIES[i]].push(thisBound);
 				precedingBound = thisBound;
 			});
