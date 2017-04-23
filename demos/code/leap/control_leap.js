@@ -38,6 +38,7 @@
 						control.closeFlyout();
 					}
 					if(choseBlock){ //let the block go
+						control.stopMovingBlock();
 						choseBlock = false;
 					}
 				}
@@ -52,10 +53,14 @@
 						choseDrawer = false; //closed drawer
 					}else if(choseBlock && !choseDrawer){//holding block. should move it around
 						control.moveHoldingBlock(cursorPosition);
+						//listen for connection
+						control.listenForConnection();
+						
 					}else if(!choseBlock && !choseDrawer){//trying to grab a new block
 						control.getBlockFromViewer(cursorPosition);
-						control.moveHoldingBlock(cursorPosition);
-						choseBlock = true;
+						if(control.currentBlock!=null){
+							choseBlock = true;
+						}
 						
 					}
 			

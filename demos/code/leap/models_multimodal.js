@@ -85,6 +85,8 @@
 		
 		if(optimalBlock!=null){
 			this.currentBlock = optimalBlock;
+			this.currentBlock.highlight();
+			this.blocks.push(this.currentBlock);
 		}
 		
 	}
@@ -99,6 +101,12 @@
 	
 	Control.prototype.moveHoldingBlock = function(cursorPosition){
 		this.currentBlock.move(cursorPosition);
+	}
+	
+	Control.prototype.stopMovingBlock = function(){	
+		this.currentBlock.stopMove();
+		this.currentBlock = null;
+		this.chosenConnection = null;
 	}
 
 	Control.prototype.listenForConnection = function(){
@@ -116,16 +124,21 @@
 		this.connections = blockSvg.getConnections_(false);
 		this.cursorX = cursorPosition[0];
 		this.cursorY = cursorPosition[1];
-		console.log("firstX"+","+this.cursorX+","+this.cursorY);
+		this.dragStart = true;
+		
 	}
 	
 	Block.prototype.getClosestConnection = function(){
 		var pairConnections = [];
+		var blockSvg = this.blockSvg;
 		this.connections.forEach(function(connection){
-			var position = this.blockSvg.getRelativeToSurfaceXY();
-			var offset = goog.math.Coordinate.difference(position, this.blockSvg.dragStartXY_);
-			var result = connection.dbOpposite_.searchForClosest(connection, 20, offset);
-			pairConnections.add([connection, result.connection, result.radius]);
+			if(blockSvg.dragStartXY_ != null){
+				var position = blockSvg.getRelativeToSurfaceXY();
+				var offset = goog.math.Coordinate.difference(position, blockSvg.dragStartXY_);
+				var result = connection.dbOpposite_.searchForClosest(connection, 20, offset);
+				pairConnections.push([connection, result.connection, result.radius]);
+			}
+			
 		});
 		
 		var shortestDistance = 20;
@@ -138,17 +151,29 @@
 			}
 			
 		});
-		return [optimalConnection];
+		return optimalConnection;
+	}
+	
+	Block.prototype.stopMove = function(){
+		this.dragStart = true;
 	}
 
 
 	Block.prototype.move = function(cursorPosition){
+		if(this.dragStart){
+			this.blockSvg.dragStartXY_ = this.blockSvg.getRelativeToSurfaceXY();
+			this.dragStart = false;
+		}
 		var deltaX = cursorPosition[0] - this.cursorX;
 		var deltaY = cursorPosition[1] - this.cursorY;
 		//update new X, Y
 		this.cursorX += deltaX;
 		this.cursorY += deltaY;
-		this.blockSvg.moveBy(deltaX, deltaY);	
+		this.blockSvg.moveBy(deltaX, deltaY);
+		console.log("drag start");
+		
+		console.log(this.blockSvg.dragStartXY_);
+		console.log(this.blockSvg.getRelativeToSurfaceXY());
 	}
 
 	Block.prototype.highlight = function(){
