@@ -5,7 +5,8 @@
 	var CATEGORY_SECTION_HEIGHT = 22; //26.55;
 	var BLOCK_CATEGORIES = ["Logic", "Loops", "Math", "Text", "Lists", "Colour", "Variables", "Functions"];
 	var category_index = -1;
-	
+	var FLYOUT_BLOCKS_POSITION = {"Logic":[], "Loops":[], "Math":[], "Text":[], "Lists":[], "Colour":[], "Variables":[], "Functions":[]};
+	var FLYOUT_RANGE = {"Logic":[], "Loops":[], "Math":[], "Text":[], "Lists":[], "Colour":[], "Variables":[], "Functions":[]};
 	
 	Control = function(){
 	
@@ -114,6 +115,36 @@
 			candidate[0].connect(candidate[1]);
 		}
 	}
+	
+	Control.prototype.getBlocksPositionInFlyout = function(){
+		var flyouts = Blockly.mainWorkspace.toolbox_.tree_.getChildren()
+		for(var i=0 ; i<6 ; i++){
+			var blockElements = flyouts[i].blocks;
+			blockElements.forEach(function(blockElement){
+				var blockSvg = Blockly.Xml.domToBlock(Blockly.mainWorkspace, blockElement);
+				var height = blockSvg.height;
+				blockSvg.dispose();
+				FLYOUT_BLOCKS_POSITION[BLOCK_CATEGORIES[i]].push(height);
+			});
+		}		
+	}
+	
+	Control.prototype.getRange = function(){
+		
+		for(var i=0 ; i<6 ; i++){
+			var precedingBound = 0;
+			var positions = FLYOUT_BLOCKS_POSITION[BLOCK_CATEGORIES[i]];
+			positions.forEach(function(blockLength){
+				var thisBound = 12*2+blockLength+precedingBound
+				FLYOUT_RANGE[BLOCK_CATEGORIES[i]].push(thisBound);
+				precedingBound = thisBound;
+			});
+			
+		}
+		console.log(FLYOUT_RANGE);
+		
+	}
+	
 
 
 	Block = function(blockSvg, cursorPosition){
