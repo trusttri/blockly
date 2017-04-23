@@ -26,7 +26,6 @@
 		hand = frame.hands[0];
 		if(hand && Blockly.mainWorkspace != null){
 			cursorPositionUpdate(hand);
-			console.log(cursorPosition);
 			var hoveringPlace = control.getHoveringPlace(cursorPosition);//hover:drawer or viewer
 			
 			if(hand.pinchStrength < 0.9){
@@ -41,8 +40,6 @@
 						}
 					}					
 					if(control.currentBlock!=null){ //let the block go
-						console.log("place");
-						console.log(hand.pinchStrength);
 						control.stopMovingBlock();
 					}
 				}
@@ -52,8 +49,6 @@
 				if(hoveringPlace == "viewer"){
 					if(Blockly.mainWorkspace.toolbox_.flyout_.isVisible()){//is flyout open?
 						if(control.currentBlock == null && checkInFlyout(cursorPosition)){
-							console.log("get new block");
-							console.log(hand.pinchStrength);
 							control.getBlockFromDrawer(cursorPosition);
 							control.closeFlyout();
 						}
@@ -63,7 +58,6 @@
 							control.moveHoldingBlock(cursorPosition);
 							control.listenForConnection();
 						}else{
-							console.log("grab from viewer");
 							control.getBlockFromViewer(cursorPosition);
 						}
 						

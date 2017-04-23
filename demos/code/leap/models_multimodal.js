@@ -1,13 +1,19 @@
 
 	var FLYOUT_BOUNDARY = 382;
-	var DRAWER_BOUNDARY = 0;
+	var DRAWER_BOUNDARY = -20;
 	var CATEGORY_STARTING_POINT = 0;//26.55;
-	var CATEGORY_SECTION_HEIGHT = 40; //26.55;
+	var CATEGORY_SECTION_HEIGHT = 57; //26.55;
 	var BLOCK_CATEGORIES = ["Logic", "Loops", "Math", "Text", "Lists", "Colour", "Variables", "Functions"];
 	var category_index = -1;
 	var FLYOUT_BLOCKS_POSITION = {"Logic":[], "Loops":[], "Math":[], "Text":[], "Lists":[], "Colour":[], "Variables":[], "Functions":[]};
 	var FLYOUT_RANGE = {"Logic":[], "Loops":[], "Math":[], "Text":[], "Lists":[], "Colour":[], "Variables":[], "Functions":[]};
 	
+	// Blockly.INPUT_VALUE = 1;
+	// Blockly.OUTPUT_VALUE = 2;
+	// Blockly.NEXT_STATEMENT = 3;
+	// Blockly.PREVIOUS_STATEMENT = 4;
+	// Blockly.DUMMY_INPUT = 5;
+		
 	Control = function(){
 	
 		this.flyoutOpen = false;
@@ -98,7 +104,6 @@
 		if(optimalBlock!=null){
 			this.currentBlock = optimalBlock;
 			this.currentBlock.highlight();
-			this.blocks.push(this.currentBlock);
 		}
 		
 	}
@@ -109,6 +114,7 @@
 			var blockElement = Blockly.mainWorkspace.toolbox_.tree_.getChildren()[0].blocks[0];
 			var newBlockSvg = Blockly.mainWorkspace.toolbox_.flyout_.placeNewBlock_(Blockly.selected);
 			this.currentBlock = new Block(newBlockSvg, cursorPosition);
+			//console.log(newBlockSvg);
 			this.currentBlock.highlight();
 			this.blocks.push(this.currentBlock);
 			this.closeFlyout();
@@ -121,14 +127,17 @@
 	}
 	
 	Control.prototype.stopMovingBlock = function(){	
+		//console.log(this.currentBlock.blockSvg);
 		this.currentBlock.stopMove();
 		this.currentBlock = null;
 		this.chosenConnection = null;
+		Blockly.selected.unselect();
 	}
 
 	Control.prototype.listenForConnection = function(){
 		
 		var candidate = this.currentBlock.getClosestConnection();
+		console.log(candidate);
 		if(candidate != null){
 			candidate[0].connect(candidate[1]);
 		}
@@ -152,7 +161,7 @@
 		for(var i=0 ; i<6 ; i++){
 			var precedingBound = 0;
 			var positions = FLYOUT_BLOCKS_POSITION[BLOCK_CATEGORIES[i]];
-			positions.push(-10);
+			FLYOUT_RANGE[BLOCK_CATEGORIES[i]].push(-50);
 			positions.forEach(function(blockLength){
 				var thisBound = 8*2+blockLength+precedingBound
 				FLYOUT_RANGE[BLOCK_CATEGORIES[i]].push(thisBound);
@@ -164,6 +173,14 @@
 	}
 	
 
+	Control.prototype.deleteAll = function(){
+		this.blocks.forEach(function(block){
+			block.blockSvg.dispose(false, true);
+			
+		});
+		this.blocks = [];
+		
+	}
 
 	Block = function(blockSvg, cursorPosition){
 		this.blockSvg = blockSvg;
