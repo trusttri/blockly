@@ -21,10 +21,8 @@
 	Control.prototype.getHoveringPlace = function(cursorPosition){
 		var currentX = cursorPosition[0];
 		if(currentX < DRAWER_BOUNDARY){
-			//console.log("in drawer");
 			return "drawer";
 		}
-		//console.log("in viewer");
 		return "viewer";
 	}
 
@@ -71,7 +69,7 @@
 	}
 
 	Control.prototype.getBlockFromViewer = function(cursorPosition){
-		var shortestDistance = 20;
+		var shortestDistance = 200;
 		var optimalBlock = null;
 		this.blocks.forEach(function(block){
 			var deltaX = cursorPosition[0] - block.cursorX;
@@ -151,6 +149,8 @@
 			}
 			
 		});
+
+		console.log(optimalConnection);
 		return optimalConnection;
 	}
 	
@@ -170,10 +170,9 @@
 		this.cursorX += deltaX;
 		this.cursorY += deltaY;
 		this.blockSvg.moveBy(deltaX, deltaY);
-		console.log("drag start");
-		
-		console.log(this.blockSvg.dragStartXY_);
-		console.log(this.blockSvg.getRelativeToSurfaceXY());
+		// console.log("drag start");
+		// console.log(this.blockSvg.dragStartXY_);
+		// console.log(this.blockSvg.getRelativeToSurfaceXY());
 	}
 
 	Block.prototype.highlight = function(){
