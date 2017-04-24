@@ -67,8 +67,9 @@
 						
 					}else{
 						if(control.currentBlock != null){
+							control.currentBlock.highlightClosestConnection();
 							control.moveHoldingBlock(cursorPosition);
-							control.listenForConnection();
+							//control.listenForConnection();
 						}else{
 							control.getBlockFromViewer(cursorPosition);
 						}
