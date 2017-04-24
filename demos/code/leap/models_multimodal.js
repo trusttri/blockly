@@ -158,7 +158,10 @@
 		this.currentBlock.stopMove();
 		this.currentBlock = null;
 		this.candidateConnection = null;
-		Blockly.selected.unselect();
+		if(Blockly.selected){
+			Blockly.selected.unselect();
+		}
+		
 	}
 
 	Control.prototype.listenForConnection = function(){
@@ -280,7 +283,7 @@
 	  // Reset the values of x and y.
 	  conn.x_ = baseX;
 	  conn.y_ = baseY;
-	  console.log({connection: bestConnection, radius: bestRadius});
+
 	  // If there were no valid connections, bestConnection will be null.
 	  return {connection: bestConnection, radius: bestRadius};
 	};
@@ -292,8 +295,8 @@
 	};
 	
 	Blockly.RenderedConnection.prototype.isConnectionAllowedSecond = function(candidate,maxRadius) {
-		console.log("distance");
-		console.log(this.distanceFromSecond(candidate) );
+		// console.log("distance");
+		// console.log(this.distanceFromSecond(candidate) );
 	  if (this.distanceFromSecond(candidate) > maxRadius) {
 		return false;
 	  }
@@ -301,6 +304,24 @@
 	  return Blockly.RenderedConnection.superClass_.isConnectionAllowed.call(this,
 		  candidate);
 	};
+	
+	Control.prototype.highlightCon = function(){
+		
+		//Blockly.selected && Blockly.highlightedConnection_ && a != Blockly.DELETE_AREA_TOOLBOX ? (Blockly.localConnection_.connect(Blockly.highlightedConnection_),
+		if(this.currentBlock.blockSvg!=null && Blockly.highlightedConnection_!=null){
+			Blockly.localConnection_.connect(Blockly.highlightedConnection_);
+			if(Blockly.localConnection_.isSuperior()){
+				Blockly.highlightedConnection_.getSourceBlock().connectionUiEffect();
+			}else{
+				Blockly.localConnection_.getSourceBlock().connectionUiEffect();
+			}
+		}
+		if(Blockly.highlightedConnection_ !=null){
+			Blockly.highlightedConnection_.unhighlight(); 
+			Blockly.highlightedConnection_ = null;
+		}
+		
+	}
 
 	
 	Block.prototype.highlightClosestConnection = function(){
@@ -322,18 +343,18 @@
 				var closestConnection = null;
 				var localConnection = null;
 				//var radiusConnection = Blockly.SNAP_RADIUS;
-				var radiusConnection = 100;
+				var radiusConnection = 50;
 				for (var i = 0; i < myConnections.length; i++) {
 				  var myConnection = myConnections[i];
 			
 				  var neighbour = myConnection.closestSecond(radiusConnection, dxy);
-				  console.log(neighbour);
+				  //console.log(neighbour);
 				  if (neighbour!=null && neighbour.connection) {
-					console.log("chosen");
+					//console.log("chosen");
 					closestConnection = neighbour.connection;
 					localConnection = myConnection;
 					radiusConnection = neighbour.radius;
-					console.log(closestConnection);
+					//console.log(closestConnection);
 				  }
 				}
 
@@ -355,6 +376,7 @@
 					console.log("hihghliht");
 					Blockly.highlightedConnection_ = closestConnection;
 					Blockly.localConnection_ = localConnection;
+					console.log(Blockly.highlightedConnection_.targetBlock());
 				}
 	
 			}

@@ -26,6 +26,7 @@
 		hand = frame.hands[0];
 		if(hand && Blockly.mainWorkspace != null){
 			cursorPositionUpdate(hand);
+			console.log(cursorPosition);
 			var extendedFingers = 0;
 			for(var f = 0; f < hand.fingers.length; f++){
 				var finger = hand.fingers[f];
@@ -36,7 +37,7 @@
 			var hoveringPlace = control.getHoveringPlace(cursorPosition);//hover:drawer or viewer
 			
 			if(extendedFingers == 5){
-				if(hoveringPlace == "drawer"){//should allow to open drawer even though selected 
+				if(hoveringPlace == "drawer" && control.currentBlock==null){//should allow to open drawer even though selected 
 					control.openClosestFlyout(cursorPosition);
 				}else if(hoveringPlace == "viewer"){
 					if(Blockly.mainWorkspace.toolbox_.flyout_.isVisible()){
@@ -47,10 +48,12 @@
 						}
 					}else{
 						if(control.currentBlock!=null){ //let the block go
+							control.highlightCon();
 							control.stopMovingBlock();
 						}else{
 							//find the closest block and highlight it
 							control.hoverOverViewer(cursorPosition);
+							
 						}
 					}					
 					
@@ -69,7 +72,9 @@
 						if(control.currentBlock != null){
 							control.currentBlock.highlightClosestConnection();
 							control.moveHoldingBlock(cursorPosition);
+							
 							//control.listenForConnection();
+							
 						}else{
 							control.getBlockFromViewer(cursorPosition);
 						}
