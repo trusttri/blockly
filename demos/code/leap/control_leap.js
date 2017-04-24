@@ -31,8 +31,8 @@
 				var finger = hand.fingers[f];
 				if(finger.extended) extendedFingers++;
 			}
-			console.log(Math.round(hand.screenPosition()[0])+","+ Math.round(hand.screenPosition()[1]));
-			console.log(cursorPosition[0] +","+ cursorPosition[1]);
+			//console.log(Math.round(hand.screenPosition()[0])+","+ Math.round(hand.screenPosition()[1]));
+			//console.log(cursorPosition[0] +","+ cursorPosition[1]);
 			var hoveringPlace = control.getHoveringPlace(cursorPosition);//hover:drawer or viewer
 			
 			if(extendedFingers == 5){
@@ -45,10 +45,15 @@
 						}else{
 							control.closeFlyout();
 						}
+					}else{
+						if(control.currentBlock!=null){ //let the block go
+							control.stopMovingBlock();
+						}else{
+							//find the closest block and highlight it
+							control.hoverOverViewer(cursorPosition);
+						}
 					}					
-					if(control.currentBlock!=null){ //let the block go
-						control.stopMovingBlock();
-					}
+					
 				}
 					
 				

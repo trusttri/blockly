@@ -20,6 +20,7 @@
 		this.chosenDrawer = "";
 		this.blocks = [];
 		this.currentBlock = null;
+		this.candidateBlock = null;
 		this.chosenConnection = null;
 		this.workSpace = Blockly.mainWorkspace;
 	}
@@ -69,16 +70,44 @@
 		
 	}
 
-	Control.prototype.hoverOverDrawer = function(cursorPosition){
+	Control.prototype.hoverOverViewer = function(cursorPosition){
+		this.candidateBlock = null;
+		var shortestDistance = 1000;
+		var closestBlock = null;
+		console.log("hovering over viewer");
+		if(!Blockly.mainWorkspace.toolbox_.flyout_.isVisible()){//flyout should be closed
+			this.blocks.forEach(function(block){
+				var blockX = block.blockSvg.getRelativeToSurfaceXY()['x'];
+				var blockY = block.blockSvg.getRelativeToSurfaceXY()['y'];
+				var deltaX = cursorPosition[0] - blockX;
+				var deltaY = cursorPosition[1] - blockY;
+				var distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+				console.log(distance);
+				if(distance < shortestDistance){
+					closestBlock = block;
+					shortestDistance = distance;
+				}
+				
+			});
+			if(closestBlock!=null){
+				console.log("selected");
+				console.log(closestBlock);
+				this.candidateBlock = closestBlock;
+				closestBlock.blockSvg.select();
+			}
+		}
+		
 	}
 
 	Control.prototype.hoverOverFlyout = function(cursorPosition){
-		if(cursorPosition[0] < FLYOUT_BOUNDARY){
+		this.candidateBlock = null;
+		if(Blockly.mainWorkspace.toolbox_.flyout_.isVisible()){
 			var blocksBoundary = FLYOUT_RANGE[control.chosenDrawer];
 			for(var i=0 ; i<(blocksBoundary.length-1); i++){
 				var currentY = cursorPosition[1];
 				if(blocksBoundary[i] < currentY && currentY < blocksBoundary[i+1]){
-					Blockly.mainWorkspace.toolbox_.flyout_.currentBlocks[i].select();
+					this.candidateBlock = Blockly.mainWorkspace.toolbox_.flyout_.currentBlocks[i];
+					this.candidateBlock.select();
 					
 					break;
 				}			
@@ -91,19 +120,20 @@
 	Control.prototype.getBlockFromViewer = function(cursorPosition){
 		var shortestDistance = 200;
 		var optimalBlock = null;
-		this.blocks.forEach(function(block){
-			var deltaX = cursorPosition[0] - block.cursorX;
-			var deltaY = cursorPosition[1] - block.cursorY;
-			var distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
-			if(distance < shortestDistance){
-				optimalBlock = block;
-				shortestDistance = distance;
-			}
-		});
+		// this.blocks.forEach(function(block){
+			// var deltaX = cursorPosition[0] - block.cursorX;
+			// var deltaY = cursorPosition[1] - block.cursorY;
+			// var distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+			// if(distance < shortestDistance){
+				// optimalBlock = block;
+				// shortestDistance = distance;
+			// }
+		// });
 		
-		if(optimalBlock!=null){
-			this.currentBlock = optimalBlock;
+		if(this.candidateBlock !=null){
+			this.currentBlock = this.candidateBlock;
 			this.currentBlock.highlight();
+			this.candidateBlock = null;
 		}
 		
 	}
@@ -118,6 +148,7 @@
 			this.currentBlock.highlight();
 			this.blocks.push(this.currentBlock);
 			this.closeFlyout();
+			this.candidateBlock = null;
 		}
 		
 	}
