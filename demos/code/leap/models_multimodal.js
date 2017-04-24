@@ -137,7 +137,7 @@
 	Control.prototype.listenForConnection = function(){
 		
 		var candidate = this.currentBlock.getClosestConnection();
-		console.log(candidate);
+		//console.log(candidate);
 		if(candidate != null){
 			candidate[0].connect(candidate[1]);
 		}
@@ -229,15 +229,24 @@
 			this.blockSvg.dragStartXY_ = this.blockSvg.getRelativeToSurfaceXY();
 			this.dragStart = false;
 		}
-		var deltaX = cursorPosition[0] - this.cursorX;
-		var deltaY = cursorPosition[1] - this.cursorY;
+		var beforeRelativeX = this.blockSvg.getRelativeToSurfaceXY()['x'];
+		var beforeRelativeY = this.blockSvg.getRelativeToSurfaceXY()['y'];
+		
+		var deltaX = cursorPosition[0] - beforeRelativeX; //before it was this.cursorX
+		var deltaY = cursorPosition[1] - beforeRelativeY;
 		//update new X, Y
 		this.cursorX += deltaX;
 		this.cursorY += deltaY;
 		this.blockSvg.moveBy(deltaX, deltaY);
+		
+		var afterRelativeX = this.blockSvg.getRelativeToSurfaceXY()['x'];
+		var afterRelativeY = this.blockSvg.getRelativeToSurfaceXY()['y'];
+		
 		// console.log("drag start");
 		// console.log(this.blockSvg.dragStartXY_);
 		// console.log(this.blockSvg.getRelativeToSurfaceXY());
+		//console.log(deltaX +","+deltaY);
+		//console.log((afterRelativeX - beforeRelativeX) + "," +(afterRelativeY - beforeRelativeY));
 	}
 
 	Block.prototype.highlight = function(){
