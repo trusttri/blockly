@@ -499,8 +499,8 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.blocklyTreeRow {',
-    'height: 40px;',
-    'line-height: 40px;',
+    'height: 57px;',
+    'line-height: 57px;',
     'margin-bottom: 3px;',
     'padding-right: 8px;',
     'white-space: nowrap;',

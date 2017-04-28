@@ -15,8 +15,91 @@
 		}
 		return false;
 	}
+	
+	setVariable = function(){
+		control.createVariable('x');
+		
+		var newBlockSvg = Blockly.mainWorkspace.toolbox_.flyout_.placeNewBlock_(Blockly.mainWorkspace.toolbox_.flyout_.currentBlocks[0]);
+		control.currentBlock = new Block(newBlockSvg, cursorPosition);
+		control.closeFlyout()
+		control.currentBlock.blockSvg.select();
+		control.currentBlock.blockSvg.moveBy(200,10)
+		control.blocks.push(control.currentBlock);
+		control.currentBlock = null;
+		
+	
+	}
+	
+	getVariable = function(){
+		Blockly.mainWorkspace.toolbox_.tree_.getChildren()[7].select();
+		var newBlockSvg = Blockly.mainWorkspace.toolbox_.flyout_.placeNewBlock_(Blockly.mainWorkspace.toolbox_.flyout_.currentBlocks[2]);
+		control.currentBlock = new Block(newBlockSvg, cursorPosition);
+		control.closeFlyout()
+		control.currentBlock.blockSvg.select();
+		control.currentBlock.blockSvg.moveBy(200,10)
+		control.blocks.push(control.currentBlock);
+		control.currentBlock = null;
+	}
+	
+	var commands = {
+			'set(variable i)' : function() {
+				setVariable()
+			},
+			
+			"set durable I": function() {
+				setVariable()
+			},
+			
+			" variable I": function() {
+				setVariable()
+			}, " Sudbury belie": function() {
+				setVariable()
+			}, " set variable eye": function() {
+				setVariable()
+			}, " said bearable I": function() {
+				setVariable()
+			},
+			"get variable":function(){
+				getVariable()
+			}, " get verbal":function(){
+				getVariable()
+			}, " getable":function(){
+				getVariable()
+			}, 
+			"get (variable I)":function(){
+				getVariable()
+			}, "get bearable I":function(){
+				getVariable()
+			}, "get variable on":function(){
+				getVariable()
+			}, "get bearable":function(){
+				getVariable()
+			},
+			'get variable (i)':function(){
+				getVariable()
+			},
+			
+		};
+	
+	if (annyang) {
+  // Let's define our first command. First the text we expect, and then the function it should call
+		
 
+		// Add our commands to annyang
+		annyang.addCommands(commands);
+		annyang.addCallback('resultMatch', function(userSaid, commandText, phrases) {
+		  console.log(userSaid); // sample output: 'hello'
+		  console.log(commandText); // sample output: 'hello (there)'
+		  console.log(phrases); // sample output: ['hello', 'halo', 'yellow', 'polo', 'hello kitty']
+		});
+
+		// Start listening. You can call this here, or attach this call to an event, button, etc.
+		annyang.start();
+	}
+	
+	
 	Leap.loop({enableGestures:true}, function(frame){
+		
 		if(Blockly.mainWorkspace != null && init){
 			control.getBlocksPositionInFlyout();
 			control.getRange();
@@ -26,7 +109,7 @@
 		hand = frame.hands[0];
 		if(hand && Blockly.mainWorkspace != null){
 			cursorPositionUpdate(hand);
-			console.log(cursorPosition);
+			//console.log(cursorPosition);
 			var extendedFingers = 0;
 			for(var f = 0; f < hand.fingers.length; f++){
 				var finger = hand.fingers[f];

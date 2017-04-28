@@ -3,7 +3,7 @@
 	var DRAWER_BOUNDARY = -20;
 	var CATEGORY_STARTING_POINT = 0;//26.55;
 	var CATEGORY_SECTION_HEIGHT = 57; //26.55;
-	var BLOCK_CATEGORIES = ["Logic", "Loops", "Math", "Text", "Lists", "Colour", "Variables", "Functions"];
+	var BLOCK_CATEGORIES = ["Logic", "Loops", "Math", "Text", "Lists", "Colour", "","Variables", "Functions"];
 	var category_index = -1;
 	var FLYOUT_BLOCKS_POSITION = {"Logic":[], "Loops":[], "Math":[], "Text":[], "Lists":[], "Colour":[], "Variables":[], "Functions":[]};
 	var FLYOUT_RANGE = {"Logic":[], "Loops":[], "Math":[], "Text":[], "Lists":[], "Colour":[], "Variables":[], "Functions":[]};
@@ -33,6 +33,11 @@
 		}
 		return "viewer";
 	}
+	
+	Control.prototype.createVariable = function(variableName){
+		Blockly.mainWorkspace.toolbox_.tree_.getChildren()[7].select();
+		Blockly.mainWorkspace.createVariable(variableName)
+	}
 
 
 	Control.prototype.openClosestFlyout = function(cursorPosition){
@@ -50,10 +55,10 @@
 			category_index = 4;
 		}else if(CATEGORY_STARTING_POINT+CATEGORY_SECTION_HEIGHT*5<currentY && currentY <= CATEGORY_STARTING_POINT+CATEGORY_SECTION_HEIGHT*6){
 			category_index = 5;
-		}else if(CATEGORY_STARTING_POINT+CATEGORY_SECTION_HEIGHT*6<currentY && currentY <= CATEGORY_STARTING_POINT+CATEGORY_SECTION_HEIGHT*7){
-			category_index = 6;
-		}else if(CATEGORY_STARTING_POINT+CATEGORY_SECTION_HEIGHT*7<currentY && currentY <= CATEGORY_STARTING_POINT+CATEGORY_SECTION_HEIGHT*8){
+		}else if(CATEGORY_STARTING_POINT+CATEGORY_SECTION_HEIGHT*6<currentY){
 			category_index = 7;
+		// }else if(CATEGORY_STARTING_POINT+CATEGORY_SECTION_HEIGHT*7<currentY && currentY <= CATEGORY_STARTING_POINT+CATEGORY_SECTION_HEIGHT*8){
+			// category_index = 6;
 		}
 		if(category_index != -1){
 			control.chosenDrawer = BLOCK_CATEGORIES[category_index];
@@ -98,10 +103,13 @@
 	Control.prototype.hoverOverFlyout = function(cursorPosition){
 		this.candidateBlock = null;
 		if(Blockly.mainWorkspace.toolbox_.flyout_.isVisible()){
+	
 			var blocksBoundary = FLYOUT_RANGE[control.chosenDrawer];
+		
 			for(var i=0 ; i<(blocksBoundary.length-1); i++){
 				var currentY = cursorPosition[1];
 				if(blocksBoundary[i] < currentY && currentY < blocksBoundary[i+1]){
+				
 					this.candidateBlock = Blockly.mainWorkspace.toolbox_.flyout_.currentBlocks[i];
 					this.candidateBlock.select();
 					
@@ -171,6 +179,25 @@
 		if(candidate != null){
 			candidate[0].connect(candidate[1]);
 		}
+	}
+	
+	Control.prototype.getVariableBlocksPosition = function(){
+		
+		var blockElements = Blockly.mainWorkspace.toolbox_.flyout_.newCreatedBlocks;
+		blockElements.forEach(function(blockElement){
+				var blockSvg = Blockly.Xml.domToBlock(Blockly.mainWorkspace, blockElement);
+				var height = blockSvg.height;
+				blockSvg.dispose();
+				FLYOUT_BLOCKS_POSITION["Variables"].push(height);
+		});
+		var precedingBound = 0;
+		var positions = FLYOUT_BLOCKS_POSITION["Variables"];
+		FLYOUT_RANGE["Variables"].push(-50);
+		positions.forEach(function(blockLength){
+			var thisBound = 8*2+blockLength+precedingBound
+			FLYOUT_RANGE["Variables"].push(thisBound);
+			precedingBound = thisBound;
+		});
 	}
 	
 	Control.prototype.getBlocksPositionInFlyout = function(){

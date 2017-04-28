@@ -122,6 +122,8 @@ Blockly.Flyout = function(workspaceOptions) {
    * @private
    */
   this.startDragMouseX_ = 0;
+  
+  this.newCreatedBlocks = null;
 };
 
 /**
@@ -737,6 +739,7 @@ Blockly.Flyout.prototype.show = function(xmlList) {
     goog.asserts.assert(goog.isFunction(fnToApply),
         'Couldn\'t find a callback function when opening a toolbox category.');
     xmlList = fnToApply(this.workspace_.targetWorkspace);
+	this.newCreatedBlocks = xmlList;
     goog.asserts.assert(goog.isArray(xmlList),
         'The result of a toolbox category callback must be an array.');
   }
