@@ -1,12 +1,14 @@
 	
 	var hand = null;
-	var cursorPosition = [0, 0];
+	var cursorPosition = [0, 0, 0];
 	var control = new Control();
 	var offset = [-280, 280]
 	var init = true;
+	hand =""
 	cursorPositionUpdate = function(hand){
 		cursorPosition[0] = hand.screenPosition()[0]+offset[0];
 		cursorPosition[1] = hand.screenPosition()[1]+offset[1];
+		cursorPosition[2] = hand.screenPosition()[2]
 	}
 	
 	checkInFlyout = function(cursorPosition){
@@ -96,10 +98,9 @@
 		// Start listening. You can call this here, or attach this call to an event, button, etc.
 		annyang.start();
 	}
-	
-	
+
 	Leap.loop({enableGestures:true}, function(frame){
-		
+		 
 		if(Blockly.mainWorkspace != null && init){
 			control.getBlocksPositionInFlyout();
 			control.getRange();
@@ -107,7 +108,9 @@
 		}
 		
 		hand = frame.hands[0];
+		
 		if(hand && Blockly.mainWorkspace != null){
+			console.log(hand.screenPosition())
 			cursorPositionUpdate(hand);
 			//console.log(cursorPosition);
 			var extendedFingers = 0;
@@ -126,6 +129,7 @@
 					if(Blockly.mainWorkspace.toolbox_.flyout_.isVisible()){
 						if(checkInFlyout(cursorPosition)){
 							control.hoverOverFlyout(cursorPosition);
+							
 						}else{
 							control.closeFlyout();
 						}
@@ -136,6 +140,7 @@
 						}else{
 							//find the closest block and highlight it
 							control.hoverOverViewer(cursorPosition);
+							
 							
 						}
 					}					
