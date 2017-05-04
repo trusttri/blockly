@@ -227,6 +227,12 @@ Blockly.Css.CONTENT = [
     'stroke: #fc3;',
     'stroke-width: 3px;',
   '}',
+  
+  '.blocklyLeapSelected>.blocklyPath {',
+    'stroke: hsla(90, 88%, 47%, 0.58);',
+    'stroke-width: 7px;',
+  '}',
+   
 
   '.blocklySelected>.blocklyPathLight {',
     'display: none;',

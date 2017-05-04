@@ -482,3 +482,17 @@
 		
 	}
 
+	Blockly.BlockSvg.prototype.addLeapSelect = function() {
+		Blockly.utils.addClass(this.svgGroup_, "blocklyLeapSelected");
+		var a = this;
+		do {
+			var b = a.getSvgRoot();
+			b.parentNode.appendChild(b);
+			a = a.getParent()
+		} while (a)
+	};
+
+	Blockly.BlockSvg.prototype.removeLeapSelect = function() {
+		Blockly.utils.removeClass(this.svgGroup_, "blocklyLeapSelected")
+	}
+	;
