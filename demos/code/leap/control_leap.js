@@ -1,9 +1,10 @@
 	
 	var hand = null;
 	var cursorPosition = [0, 0, 0];
+	var originalPosition = [0,0,0];
 	var control = new Control();
 	var offset = [-280, 280]
-	var fingerOffset = [115, -165];
+	var fingerOffset = [-140, 400];
 	var init = true;
 	hand =""
 	cursorPositionUpdate = function(hand){
@@ -11,16 +12,25 @@
 		cursorPosition[1] = hand.screenPosition()[1]+offset[1];
 		cursorPosition[2] = hand.screenPosition()[2]
 	}
-	cursorPositionUpdate2 = function(hand){
-		finger = hand.fingers[1]["stabilizedTipPosition"];
+	fingerCursorUpdate = function(hand){
+		//finger = hand.fingers[1]["tipPosition"];
+		finger = hand.fingers[1].screenPosition();
 		cursorPosition[0] = finger[0]+fingerOffset[0];
 		cursorPosition[1] = finger[1]+fingerOffset[1];
-		cursorPosition[2] = finger[2]
+		//cursorPosition[2] = finger[2]
+		//console.log(hand.fingers[1]["stabilizedTipPosition"]);
+		
+		
+		originalPosition[0] = hand.screenPosition()[0]+offset[0];
+		originalPosition[1] = hand.screenPosition()[1]+offset[1];
+		originalPosition[2] = hand.screenPosition()[2]
+		console.log(cursorPosition[0] +"," + cursorPosition[1]);
+		
 	}
 	
 	checkInFlyout = function(cursorPosition){
 		if(cursorPosition[0]<Blockly.mainWorkspace.toolbox_.flyout_.width_+5){
-						return true;
+			return true;
 		}
 		return false;
 	}
@@ -63,14 +73,11 @@
 		
 		hand = frame.hands[0];
 		control.timestamp = frame["timestamp"];
-		
-		
-		
+
 		if(hand && Blockly.mainWorkspace != null){
 			//console.log(hand.screenPosition())
-			cursorPositionUpdate(hand);
-			console.log(hand.fingers[1]["stabilizedTipPosition"]);
-			console.log(cursorPosition);
+			fingerCursorUpdate(hand);
+		
 			//console.log(cursorPosition);
 			var extendedFingers = 0;
 			for(var f = 0; f < hand.fingers.length; f++){
@@ -80,60 +87,65 @@
 			//console.log(Math.round(hand.screenPosition()[0])+","+ Math.round(hand.screenPosition()[1]));
 			//console.log(cursorPosition[0] +","+ cursorPosition[1]);
 			var hoveringPlace = control.getHoveringPlace(cursorPosition);//hover:drawer or viewer
-			
-			if(extendedFingers == 5){
+		
+			//when one finger, hovering over a block 
+			if(extendedFingers == 1){
+				//1.If over drawer
 				if(hoveringPlace == "drawer" && control.currentBlock==null){//should allow to open drawer even though selected 
 					control.openClosestFlyout(cursorPosition);
+					document.getElementById('user-said').innerHTML = "Select drawer";
 				}else if(hoveringPlace == "viewer"){
-					if(Blockly.mainWorkspace.toolbox_.flyout_.isVisible()){
-						if(checkInFlyout(cursorPosition)){
-							control.hoverOverFlyout(cursorPosition);
-							
+					if(Blockly.mainWorkspace.toolbox_.flyout_.isVisible()){	
+				//2.Over flyout(and current block is null)
+						if(checkInFlyout(cursorPosition) && control.currentBlock == null){
+							//Is one block possible for move?
+							if(BLOCK_SELECTED_FOR_MOVE == null){
+								control.hoverOverFlyout(cursorPosition);
+								document.getElementById('user-said').innerHTML = "Searching in flyout";
+							}else{
+								control.getBlockFromDrawer(cursorPosition);
+								document.getElementById('user-said').innerHTML = "Selected from flyout";
+								control.closeFlyout();
+							}	
 						}else{
 							control.closeFlyout();
 						}
 					}else{
-						if(control.currentBlock!=null){ //let the block go
-							control.highlightCon();
-							control.stopMovingBlock();
+				//3.Over viewer(flyout closed)
+						if(control.currentBlock== null){
+							if(BLOCK_SELECTED_FOR_MOVE == null){
+								//find the closest block and highlight it
+								control.hoverOverViewer(cursorPosition);
+								document.getElementById('user-said').innerHTML = "Searching in viewer";
+							}else{
+								document.getElementById('user-said').innerHTML = "Selected from viewer";
+								control.getBlockFromViewer(cursorPosition);
+							}
 						}else{
-							//find the closest block and highlight it
-							control.hoverOverViewer(cursorPosition);
-							
-							
+							control.currentBlock.highlightClosestConnection();
+							control.moveHoldingBlock(cursorPosition);
+							document.getElementById('user-said').innerHTML = "Moving block";
 						}
 					}					
 					
 				}
 					
+			//when extend all fingers, 
+			//put the block down
+			//or do nothing
+			}else if(extendedFingers > 4){
 				
-			}else if(extendedFingers <=1){ //hand is grabbing for something
-				if(hoveringPlace == "viewer"){
-					if(Blockly.mainWorkspace.toolbox_.flyout_.isVisible()){//is flyout open?
-						if(control.currentBlock == null && checkInFlyout(cursorPosition)){
-							control.getBlockFromDrawer(cursorPosition);
-							if(control.currentBlock != null){
-								control.closeFlyout();
-							}
-							
-						}
-						
-					}else{
-						if(control.currentBlock != null){
-							control.currentBlock.highlightClosestConnection();
-							control.moveHoldingBlock(cursorPosition);
-							
-							//control.listenForConnection();
-							
-						}else{
-							control.getBlockFromViewer(cursorPosition);
-						}
-						
+				if(Blockly.mainWorkspace.toolbox_.flyout_.isVisible() == false){
+					if(control.currentBlock!=null){ //let the block go
+						control.highlightCon();
+						control.stopMovingBlock();
 					}
-						
-			
 				}
 			}
+			
+			
+			
+			
 		}//hand
 			
 	}).use('screenPosition', {scale: 0.57});

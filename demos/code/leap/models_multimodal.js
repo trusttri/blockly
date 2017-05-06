@@ -3,10 +3,10 @@
 	var DRAWER_BOUNDARY = -20;
 	var CATEGORY_STARTING_POINT = 0;//26.55;
 	var CATEGORY_SECTION_HEIGHT = 57; //26.55;
-	var BLOCK_CATEGORIES = ["Logic", "Loops", "Math", "Text", "Lists", "Colour", "","Variables", "Functions"];
+	var BLOCK_CATEGORIES = ["Colour","Logic", "Loops", "Math", "Text", "Lists",  "","Variables", "Functions"];
 	var category_index = -1;
-	var FLYOUT_BLOCKS_POSITION = {"Logic":[], "Loops":[], "Math":[], "Text":[], "Lists":[], "Colour":[], "Variables":[], "Functions":[]};
-	var FLYOUT_RANGE = {"Logic":[], "Loops":[], "Math":[], "Text":[], "Lists":[], "Colour":[], "Variables":[], "Functions":[]};
+	var FLYOUT_BLOCKS_POSITION = {"Colour":[], "Logic":[], "Loops":[], "Math":[], "Text":[], "Lists":[], "Variables":[], "Functions":[]};
+	var FLYOUT_RANGE = {"Colour":[], "Logic":[], "Loops":[], "Math":[], "Text":[], "Lists":[],  "Variables":[], "Functions":[]};
 	var BLOCK_SELECTED_FOR_MOVE;
 	var candidate_timestamp = 0;
 	// Blockly.INPUT_VALUE = 1;
@@ -116,7 +116,7 @@
 						this.candidateBlock = closestBlock;
 						closestBlock.highlight();
 					}else{//if it is the same block as old candidate block
-						if((this.timestamp  - this.hovered_start_time)>2500000){
+						if((this.timestamp  - this.hovered_start_time)>3000000){
 							//BLOCK_SELECTED_FOR_MOVE = this.candidateBlock.blockSvg;	
 							this.candidateBlock.blockSvg.selectForMove()
 						}
@@ -138,9 +138,6 @@
 
 	Control.prototype.hoverOverFlyout = function(cursorPosition){
 		if(Blockly.mainWorkspace.toolbox_.flyout_.isVisible()){
-			
-			
-	
 			var blocksBoundary = FLYOUT_RANGE[control.chosenDrawer];
 			if(blocksBoundary != null){
 				for(var i=0 ; i<(blocksBoundary.length-1); i++){
@@ -161,9 +158,11 @@
 							}else{
 								//hovering over same block
 								//check if hovered over enough timestamp
-								if((this.timestamp  - this.hovered_start_time)>1500000){
+								if((this.timestamp  - this.hovered_start_time)>4000000){
+									document.getElementById('user-said').innerHTML = this.timestamp  - this.hovered_start_time;
 									//BLOCK_SELECTED_FOR_MOVE = this.candidateBlock.blockSvg;
 									console.log("case 2: old one long hover");
+									
 									this.candidateBlock.highlight();
 									this.candidateBlock.blockSvg.selectForMove()
 									//console.log(this.timestamp  - this.hovered_start_time);
@@ -610,7 +609,10 @@
 		// Unselect any previously selected block.
 		Blockly.Events.disable();
 		try {
-		  BLOCK_SELECTED_FOR_MOVE.unselectForOtherMove();
+			if(BLOCK_SELECTED_FOR_MOVE != null){
+				BLOCK_SELECTED_FOR_MOVE.unselectForOtherMove();
+			}
+		  
 		} finally {
 		  Blockly.Events.enable();
 		}
