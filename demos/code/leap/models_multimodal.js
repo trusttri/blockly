@@ -8,11 +8,14 @@
 	var FLYOUT_BLOCKS_POSITION = {"Logic":[], "Loops":[], "Math":[], "Text":[], "Lists":[], "Colour":[], "Variables":[], "Functions":[]};
 	var FLYOUT_RANGE = {"Logic":[], "Loops":[], "Math":[], "Text":[], "Lists":[], "Colour":[], "Variables":[], "Functions":[]};
 	var BLOCK_SELECTED_FOR_MOVE;
+	var candidate_timestamp = 0;
 	// Blockly.INPUT_VALUE = 1;
 	// Blockly.OUTPUT_VALUE = 2;
 	// Blockly.NEXT_STATEMENT = 3;
 	// Blockly.PREVIOUS_STATEMENT = 4;
 	// Blockly.DUMMY_INPUT = 5;
+	
+	//float framePeriod = frame.timestamp() - controller.frame(1).timestamp();
 		
 	Control = function(){
 	
@@ -23,6 +26,8 @@
 		this.candidateBlock = null;
 		this.candidateConnection = null;
 		this.workSpace = Blockly.mainWorkspace;
+		this.timestamp = 0;
+		this.hovered_start_time = 0;
 	}
 	
 
@@ -76,13 +81,13 @@
 	}
 
 	Control.prototype.hoverOverViewer = function(cursorPosition){
-		this.candidateBlock = null;
+		//this.candidateBlock = null;
 		var shortestDistance = 1000;
 		var closestBlock = null;
-		if(BLOCK_SELECTED_FOR_MOVE!=null && cursorPosition[2] > 37){
-			BLOCK_SELECTED_FOR_MOVE.unselectForOtherMove()
+		// if(BLOCK_SELECTED_FOR_MOVE!=null && cursorPosition[2] > 80){
+			// BLOCK_SELECTED_FOR_MOVE.unselectForOtherMove()
 			
-		}
+		// }
 		if(!Blockly.mainWorkspace.toolbox_.flyout_.isVisible()){//flyout should be closed
 			this.blocks.forEach(function(block){
 				var blockX = block.blockSvg.getRelativeToSurfaceXY()['x'];
@@ -98,42 +103,88 @@
 				
 			});
 			if(closestBlock!=null){
-				this.candidateBlock = closestBlock;
-				closestBlock.blockSvg.select();
-				if(cursorPosition[2] < 37){
-					console.log("close");
-					closestBlock.blockSvg.selectForMove();
+				//if there was a candidate block already
+				if(this.candidateBlock != null){
+					if(this.candidateBlock != closestBlock){//if it is a new closest block
+						if(BLOCK_SELECTED_FOR_MOVE != null){
+							if(BLOCK_SELECTED_FOR_MOVE != null){
+								BLOCK_SELECTED_FOR_MOVE.unselectForOtherMove();
+								this.hovered_start_time = this.timestamp ;
+							}
+							
+						}
+						this.candidateBlock = closestBlock;
+						closestBlock.highlight();
+					}else{//if it is the same block as old candidate block
+						if((this.timestamp  - this.hovered_start_time)>2500000){
+							//BLOCK_SELECTED_FOR_MOVE = this.candidateBlock.blockSvg;	
+							this.candidateBlock.blockSvg.selectForMove()
+						}
+					}
+					
+				}else{//if there wasn't a candidate block 
+					this.candidateBlock = closestBlock;
+					closestBlock.highlight();
 				}
+				
+				// if(cursorPosition[2] < 80){
+					// console.log("close");
+					// closestBlock.blockSvg.selectForMove();
+				// }
 			}
 		}
 		
 	}
 
 	Control.prototype.hoverOverFlyout = function(cursorPosition){
-		this.candidateBlock = null;
 		if(Blockly.mainWorkspace.toolbox_.flyout_.isVisible()){
 			
-			if(BLOCK_SELECTED_FOR_MOVE!=null && cursorPosition[2] > 37){
-				BLOCK_SELECTED_FOR_MOVE.unselectForOtherMove()
-			
-			}
 			
 	
 			var blocksBoundary = FLYOUT_RANGE[control.chosenDrawer];
-		
-			for(var i=0 ; i<(blocksBoundary.length-1); i++){
-				var currentY = cursorPosition[1];
-				if(blocksBoundary[i] < currentY && currentY < blocksBoundary[i+1]){
-				
-					this.candidateBlock = Blockly.mainWorkspace.toolbox_.flyout_.currentBlocks[i];
-					this.candidateBlock.select();
-					if(cursorPosition[2] < 37){
+			if(blocksBoundary != null){
+				for(var i=0 ; i<(blocksBoundary.length-1); i++){
+					var currentY = cursorPosition[1];
+					if(blocksBoundary[i] < currentY && currentY < blocksBoundary[i+1]){
+						var blockSvg = Blockly.mainWorkspace.toolbox_.flyout_.currentBlocks[i];
+						if(this.candidateBlock != null){
+							
+							if(this.candidateBlock.blockSvg != blockSvg){
+								console.log("case 1: new one");
+								 if(BLOCK_SELECTED_FOR_MOVE != null){
+									 BLOCK_SELECTED_FOR_MOVE.unselectForOtherMove();
+									 this.hovered_start_time = this.timestamp;
+								 }
+								//new block for candidate
+								this.candidateBlock = new Block(blockSvg, cursorPosition);
+								this.candidateBlock.highlight();
+							}else{
+								//hovering over same block
+								//check if hovered over enough timestamp
+								if((this.timestamp  - this.hovered_start_time)>1500000){
+									//BLOCK_SELECTED_FOR_MOVE = this.candidateBlock.blockSvg;
+									console.log("case 2: old one long hover");
+									this.candidateBlock.highlight();
+									this.candidateBlock.blockSvg.selectForMove()
+									//console.log(this.timestamp  - this.hovered_start_time);
+									
+								}else{
+									console.log("case 3:: old one not enough");
+									this.candidateBlock.highlight();
+								}
+								
+							}
+						}else{
+							console.log("case 4: completely new");
+							this.candidateBlock = new Block(blockSvg, cursorPosition);
+							this.hovered_start_time = this.timestamp;
+							this.candidateBlock.highlight();
+							
+						}
 						
-						//this.candidateBlock.selectForMove();
-					}
-					
-					break;
-				}			
+						break;
+					}			
+				}
 			}
 		}
 		
@@ -163,26 +214,27 @@
 
 	
 	Control.prototype.getBlockFromDrawer = function(cursorPosition){
-		if(Blockly.mainWorkspace.toolbox_.flyout_.isVisible() && Blockly.selected != null){
+		if(Blockly.mainWorkspace.toolbox_.flyout_.isVisible() && Blockly.selected != null && BLOCK_SELECTED_FOR_MOVE != null ){
 			var blockElement = Blockly.mainWorkspace.toolbox_.tree_.getChildren()[0].blocks[0];
-			var newBlockSvg = Blockly.mainWorkspace.toolbox_.flyout_.placeNewBlock_(Blockly.selected);
+			var newBlockSvg = Blockly.mainWorkspace.toolbox_.flyout_.placeNewBlock_(BLOCK_SELECTED_FOR_MOVE);
 			this.currentBlock = new Block(newBlockSvg, cursorPosition);
+			newBlockSvg.selectForMove();
 			//console.log(newBlockSvg);
 			this.currentBlock.highlight();
 			this.blocks.push(this.currentBlock);
 			this.closeFlyout();
 			this.candidateBlock = null;
-			this.currentBlock.blockSvg.selectForMove()
+			
 		}
 		
 	}
 	
 	Control.prototype.moveHoldingBlock = function(cursorPosition){
 		
-		// if(BLOCK_SELECTED_FOR_MOVE!=null && cursorPosition[2] > 37){
+		// if(BLOCK_SELECTED_FOR_MOVE!=null && cursorPosition[2] > 80){
 			// BLOCK_SELECTED_FOR_MOVE.unselectForOtherMove()
 			// BLOCK_SELECTED_FOR_MOVE = null;
-		// }else if(BLOCK_SELECTED_FOR_MOVE!= this.currentBlock.blockSvg && cursorPosition[2] <37){
+		// }else if(BLOCK_SELECTED_FOR_MOVE!= this.currentBlock.blockSvg && cursorPosition[2] <80){
 			// BLOCK_SELECTED_FOR_MOVE = this.currentBlock.blockSvg;
 			// BLOCK_SELECTED_FOR_MOVE.selectForMove();
 		// }
@@ -199,6 +251,10 @@
 		this.candidateConnection = null;
 		if(Blockly.selected){
 			Blockly.selected.unselect();
+		}
+		if(BLOCK_SELECTED_FOR_MOVE != null){
+			BLOCK_SELECTED_FOR_MOVE.unselectForOtherMove();
+			this.hovered_start_time = this.timestamp;
 		}
 		
 	}
@@ -277,6 +333,7 @@
 		this.cursorX = cursorPosition[0];
 		this.cursorY = cursorPosition[1];
 		this.dragStart = true;
+		this.unplug = 0;
 		
 	}
 	// Blockly.RenderedConnection.prototype.closest = function(maxLimit, dx, dy) {
@@ -431,10 +488,10 @@
 				if (closestConnection &&
 					closestConnection != Blockly.highlightedConnection_) {
 					closestConnection.highlight();
-					console.log("hihghliht");
+					//console.log("hihghliht");
 					Blockly.highlightedConnection_ = closestConnection;
 					Blockly.localConnection_ = localConnection;
-					console.log(Blockly.highlightedConnection_.targetBlock());
+					//console.log(Blockly.highlightedConnection_.targetBlock());
 				}
 	
 			}
@@ -497,7 +554,13 @@
 		var afterRelativeY = this.blockSvg.getRelativeToSurfaceXY()['y'];
 		
 		//check for disconnect
-		this.blockSvg.unplug();
+		if((this.blockSvg.previousConnection != null && this.blockSvg.previousConnection.isConnected()) || (this.blockSvg.outputConnection != null && this.blockSvg.outputConnection.isConnected())){
+			console.log("pluggy");
+			console.log(this.unplug);
+			this.blockSvg.unplug();
+			this.unplug+=1;
+		}
+		
 		
 		// console.log("drag start");
 		// console.log(this.blockSvg.dragStartXY_);
@@ -532,6 +595,7 @@
 	
 	
 	Blockly.BlockSvg.prototype.selectForMove = function() {
+	
 	  if (this.isShadow() && this.getParent()) {
 		// Shadow blocks should not be selected.
 		this.getParent().selectForMove();
@@ -554,6 +618,7 @@
 
 	  BLOCK_SELECTED_FOR_MOVE = this;
 	  this.addSelectForMove();
+	  
 	};
 	
 	Blockly.BlockSvg.prototype.unselectForOtherMove = function() {

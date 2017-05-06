@@ -224,13 +224,13 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.blocklySelected>.blocklyPath {',
-    'stroke: #fc3;',
+    'stroke: #33ff34;',
     'stroke-width: 3px;',
   '}',
   
   '.blocklyLeapSelected>.blocklyPath {',
-    'stroke: hsla(90, 88%, 47%, 0.58);',
-    'stroke-width: 7px;',
+	'stroke: #33ff34;',
+    'stroke-width: 6px;',
   '}',
    
 

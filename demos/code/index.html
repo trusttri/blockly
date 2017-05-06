@@ -13,22 +13,19 @@
   <script src="../../php_compressed.js"></script>
   <script src="../../lua_compressed.js"></script>
   <script src="../../dart_compressed.js"></script>
-  <script src="annyang-master/dist/annyang.min.js"></script>
+  
+  <script type="text/javascript" src="leap/underscore.min.js"></script>
   <script src="leap/leap.min.js"></script>
   <script src="leap/leap-plugins.min.js"></script>
   <script src="leap/models_multimodal.js"></script>
   <script src="leap/control_leap.js"></script>
   <script src="code.js"></script>
+  <script src="leap/setupSpeech.js">			</script>
 </head>
 <body>
   <table width="100%" height="100%">
     <tr>
-      <td>
-        <h1>
-		  Intelligent Multimodal Blockly
-          <span id="title">...</span>
-        </h1>
-      </td>
+	  <td><h1>Multimodal Blockly</h1></td>
       <td class="farSide">
         <select id="languageMenu"></select>
       </td>
@@ -40,26 +37,31 @@
             <td id="tab_blocks" class="tabon">...</td>
             <td class="tabmin">&nbsp;</td>
             <td id="tab_javascript" class="taboff">JavaScript</td>
-            <td class="tabmin">&nbsp;</td>
-            <td id="tab_python" class="taboff">Python</td>
-            <td class="tabmin">&nbsp;</td>
-            <td id="tab_php" class="taboff">PHP</td>
-            <td class="tabmin">&nbsp;</td>
-            <td id="tab_lua" class="taboff">Lua</td>
-            <td class="tabmin">&nbsp;</td>
-            <td id="tab_dart" class="taboff">Dart</td>
-            <td class="tabmin">&nbsp;</td>
-            <td id="tab_xml" class="taboff">XML</td>
+            <!-- <td class="tabmin">&nbsp;</td> -->
+            <!-- <td id="tab_python" class="taboff">Python</td> -->
+            <!-- <td class="tabmin">&nbsp;</td> -->
+            <!-- <td id="tab_php" class="taboff">PHP</td> -->
+            <!-- <td class="tabmin">&nbsp;</td> -->
+			 <!-- <td id="title">...</td> -->
+			 <td class="tabmin">&nbsp;</td>
+			 <td class="tabmin">&nbsp;</td>
             <td class="tabmax">
-              <button id="trashButton" class="notext" title="...">
-                <img src='../../media/1x1.gif' class="trash icon21">
-              </button>
-              <button id="linkButton" class="notext" title="...">
-                <img src='../../media/1x1.gif' class="link icon21">
-              </button>
-              <button id="runButton" class="notext primary" title="...">
-                <img src='../../media/1x1.gif' class="run icon21">
-              </button>
+				
+				<span id="speech-debug">
+					 <span id="user-said">You said "  "</span>
+				</span>
+				<span id="speech-variable">
+					( for setting/getting variable )
+				</span>
+              <!-- <button id="trashButton" class="notext" title="..."> -->
+                <!-- <img src='../../media/1x1.gif' class="trash icon21"> -->
+              <!-- </button> -->
+              <!-- <button id="linkButton" class="notext" title="..."> -->
+                <!-- <img src='../../media/1x1.gif' class="link icon21"> -->
+              <!-- </button> -->
+              <!-- <button id="runButton" class="notext primary" title="..."> -->
+                <!-- <img src='../../media/1x1.gif' class="run icon21"> -->
+              <!-- </button> -->
             </td>
           </tr>
         </table>

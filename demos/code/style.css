@@ -92,9 +92,10 @@ td.tabmax {
   border-left-style: none !important;
   border-right-style: none !important;
   width: 99%;
-  padding-left: 10px;
+  padding-left: 20px;
   padding-right: 10px;
-  text-align: right;
+  background-color:rgba(234, 234, 244, 0.62);
+  /* text-align: right; */
 }
 html[dir=rtl] td.tabmax {
   text-align: left;
@@ -140,6 +141,18 @@ pre.content {
   margin-right: 15px;
 }
 
+#speech-debug{
+	 font-size: 28px;
+}
+
+#speech-variable{
+	font-size:20px;
+}
+
+#variable-speech-td{
+	padding-top: 4px;
+	padding-bottom:9px;
+}
 /* Buttons */
 button {
   padding: 1px 10px;
