@@ -6,6 +6,7 @@
 	var offset = [-280, 280]
 	var fingerOffset = [-140, 400];
 	var init = true;
+	var leapFrame;
 	hand =""
 	cursorPositionUpdate = function(hand){
 		cursorPosition[0] = hand.screenPosition()[0]+offset[0];
@@ -24,7 +25,7 @@
 		originalPosition[0] = hand.screenPosition()[0]+offset[0];
 		originalPosition[1] = hand.screenPosition()[1]+offset[1];
 		originalPosition[2] = hand.screenPosition()[2]
-		console.log(cursorPosition[0] +"," + cursorPosition[1]);
+		
 		
 	}
 	
@@ -59,12 +60,42 @@
 		control.blocks.push(control.currentBlock);
 		control.currentBlock = null;
 	}
+
+	drawCircle = function(hand, frame){
+		var c = document.getElementById("cursor-canvas");
+		//var fingerOffset = [-140, 400];
+		//var leapPoint = hand.fingers[1].screenPosition(); //could be any point
+		var leapPoint = hand.fingers[1].tipPosition;
+		var iBox = frame.interactionBox;
+		var normalizedPoint = iBox.normalizePoint(leapPoint, true);
+		
+		//var appX = normalizedPoint[0] * .innerWidth;
+		//var appY = (1 - normalizedPoint[1]) * window.innerHeight;
+		var appX = normalizedPoint[0] * c.width
+		var appY = (1 - normalizedPoint[1]) * c.height
+		console.log(leapPoint);
+		console.log(normalizedPoint);
+		
+		
+		var ctx = c.getContext("2d");
+		//ctx.clearRect(0, 0, c.width, c.height);
+		
+		document.getElementById('user-said').innerHTML = appX +" , "+appY;
+		
+		ctx.clearRect(0, 0, c.width, c.height);
+		ctx.beginPath();
+		ctx.arc(appX, appY, 4, 0, 2 * Math.PI);
+		ctx.stroke();
+		ctx.fillStyle = "yellow";
+		ctx.fill();
+
+	}
 	
 	
 
 
 	Leap.loop({enableGestures:true}, function(frame){
-		 
+		 leapFrame = frame;
 		if(Blockly.mainWorkspace != null && init){
 			control.getBlocksPositionInFlyout();
 			control.getRange();
@@ -73,8 +104,11 @@
 		
 		hand = frame.hands[0];
 		control.timestamp = frame["timestamp"];
-
+		
 		if(hand && Blockly.mainWorkspace != null){
+			//draw 
+			drawCircle(hand, frame);
+			
 			//console.log(hand.screenPosition())
 			fingerCursorUpdate(hand);
 		

@@ -123,6 +123,7 @@ pre.content {
   overflow: scroll;
 }
 #content_blocks {
+  position:absolute;
   padding: 0;
 }
 .blocklySvg {
@@ -173,4 +174,30 @@ button {
 }
 .run {
   background-position: -42px 0px;
+}
+
+
+/*   */
+#main-wrapper{
+	height: 100%;
+	width: 100%;
+	position: relative;
+}
+
+#cursor-canvas{
+	height: 100%;
+	width: 100%;
+	position: absolute;
+	z-index: 2;
+	pointer-events:none;
+}
+
+#main-table{
+	position: absolute;
+	pointer-events:visible;
+}
+
+#content_blocks{
+	z-index: 0;
+	pointer-events:visible;
 }
