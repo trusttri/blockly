@@ -1,38 +1,35 @@
 	
-	var hand = null;
+	var hand;
 	var cursorPosition = [0, 0, 0];
-	var originalPosition = [0,0,0];
 	var control = new Control();
-	var offset = [-280, 280]
-	var fingerOffset = [-140, 400];
-	var init = true;
+	var windowSize = [window.innerWidth,window.innerHeight];
 	var leapFrame;
-	hand =""
-	cursorPositionUpdate = function(hand){
-		cursorPosition[0] = hand.screenPosition()[0]+offset[0];
-		cursorPosition[1] = hand.screenPosition()[1]+offset[1];
-		cursorPosition[2] = hand.screenPosition()[2]
-	}
-	fingerCursorUpdate = function(hand){
-		//finger = hand.fingers[1]["tipPosition"];
-		finger = hand.fingers[1].screenPosition();
-		cursorPosition[0] = finger[0]+fingerOffset[0];
-		cursorPosition[1] = finger[1]+fingerOffset[1];
-		//cursorPosition[2] = finger[2]
-		//console.log(hand.fingers[1]["stabilizedTipPosition"]);
+	var leapController; 
+	var testProcessed = false;
+	var spokenMove = false;
+	var spoken = true;
+	
+	fingerCursorUpdate = function(hand, frame){
+		var leapPoint = hand.fingers[1].tipPosition;
+		var iBox = frame.interactionBox;
+		var normalizedPoint = iBox.normalizePoint(leapPoint, true);
 		
-		
-		originalPosition[0] = hand.screenPosition()[0]+offset[0];
-		originalPosition[1] = hand.screenPosition()[1]+offset[1];
-		originalPosition[2] = hand.screenPosition()[2]
-		
-		
+		var appX = normalizedPoint[0] * windowSize[0]
+		var appY = (1 - normalizedPoint[1]) * windowSize[1]
+		cursorPosition[0] = appX;
+		cursorPosition[1] = appY;
 	}
 	
 	checkInFlyout = function(cursorPosition){
-		if(cursorPosition[0]<Blockly.mainWorkspace.toolbox_.flyout_.width_+5){
+		var DRAWER_BOUNDARY = document.getElementsByClassName('blocklyToolboxDiv')[0].offsetWidth;
+		//if(DRAWER_BOUNDARY - 20 <cursorPosition[0] && cursorPosition[0] < Blockly.mainWorkspace.toolbox_.flyout_.width_+200){
+		if(DRAWER_BOUNDARY - 20 <cursorPosition[0] && cursorPosition[0] < 550){
+			console.log("flyout");
+			console.log(cursorPosition[0]);
 			return true;
 		}
+		console.log("viewr");
+		console.log(cursorPosition[0]);
 		return false;
 	}
 	
@@ -60,74 +57,111 @@
 		control.blocks.push(control.currentBlock);
 		control.currentBlock = null;
 	}
+	
+	resizeForCursor = function() {
+		var c = document.getElementById("abs_mapping_stage");
+        c.width = window.innerWidth;
+        c.height = window.innerHeight;
+    }
 
-	drawCircle = function(hand, frame){
-		var c = document.getElementById("cursor-canvas");
-		//var fingerOffset = [-140, 400];
-		//var leapPoint = hand.fingers[1].screenPosition(); //could be any point
-		var leapPoint = hand.fingers[1].tipPosition;
-		var iBox = frame.interactionBox;
-		var normalizedPoint = iBox.normalizePoint(leapPoint, true);
-		
-		//var appX = normalizedPoint[0] * .innerWidth;
-		//var appY = (1 - normalizedPoint[1]) * window.innerHeight;
-		var appX = normalizedPoint[0] * c.width
-		var appY = (1 - normalizedPoint[1]) * c.height
-		console.log(leapPoint);
-		console.log(normalizedPoint);
-		
-		
-		var ctx = c.getContext("2d");
-		//ctx.clearRect(0, 0, c.width, c.height);
-		
-		document.getElementById('user-said').innerHTML = appX +" , "+appY;
-		
-		ctx.clearRect(0, 0, c.width, c.height);
-		ctx.beginPath();
-		ctx.arc(appX, appY, 4, 0, 2 * Math.PI);
-		ctx.stroke();
-		ctx.fillStyle = "yellow";
-		ctx.fill();
+	
+	mapCursor = function(){
+		var abs = {};
+		abs.width = window.innerWidth;
+		abs.height = window.innerHeight;
+		abs.stage = new Kinetic.Stage({
+				container: 'abs_mapping_stage',
+				width: abs.width,
+				height: abs.height
+		});
 
+		abs.layer = new Kinetic.Layer();
+
+		
+		abs.tip = new Kinetic.Circle({
+				x: 239,
+				y: 75,
+				radius: 10,
+				fill: 'green',
+				stroke: 'black',
+				strokeWidth: 3.5,
+				opacity:.5,
+				visible: true
+			  });
+
+		abs.layer.add(abs.tip);
+		abs.stage.add(abs.layer);
+		
+		
+
+		abs.scale = 600/470;
+		abs.anim = new Kinetic.Animation(function(frame) {
+			var leap_frame = leapController.frame(); //leap is a connected leapController object
+			if(leap_frame.valid && leap_frame.pointables.length > 0){
+			   //pointable = leap_frame.pointables[0];
+			   //abs.tip.x(pointable.tipPosition[0] * abs.scale + abs.width/2);
+			   //abs.tip.y(abs.height - pointable.tipPosition[1] * abs.scale);
+				var hand = leap_frame.hands[0];
+				var leapPoint = hand.fingers[1].tipPosition;
+				var iBox = leap_frame.interactionBox;
+				var normalizedPoint = iBox.normalizePoint(leapPoint, true);
+				
+				//var appX = normalizedPoint[0] * .innerWidth;
+				//var appY = (1 - normalizedPoint[1]) * window.innerHeight;
+				var appX = normalizedPoint[0] * windowSize[0]
+				var appY = (1 - normalizedPoint[1]) * windowSize[1]
+			   
+			   abs.tip.x(appX);
+			   abs.tip.y(appY);
+			} else if (abs.tip.y() < 0){
+			   abs.tip.x(abs.width/2);
+			   abs.tip.y(abs.height/2);     
+			}
+
+		}, abs.layer);
+
+		abs.anim.start();
+		
 	}
 	
-	
 
-
-	Leap.loop({enableGestures:true}, function(frame){
-		 leapFrame = frame;
-		if(Blockly.mainWorkspace != null && init){
-			control.getBlocksPositionInFlyout();
-			control.getRange();
-			init=false;
-		}
-		
+	leapController = Leap.loop({enableGestures:true}, function(frame){
+		leapFrame = frame;
 		hand = frame.hands[0];
 		control.timestamp = frame["timestamp"];
 		
+		if(init){
+			if(Blockly.mainWorkspace != null && control != null){
+				control.getBlocksPositionInFlyout();
+				control.getRange();
+				init= false;
+			}	
+			Blockly.mainWorkspace.variableList = [];
+			
+		}
+		
 		if(hand && Blockly.mainWorkspace != null){
 			//draw 
-			drawCircle(hand, frame);
+			resizeForCursor()
+
+			fingerCursorUpdate(hand, frame);
 			
-			//console.log(hand.screenPosition())
-			fingerCursorUpdate(hand);
-		
-			//console.log(cursorPosition);
+			
 			var extendedFingers = 0;
 			for(var f = 0; f < hand.fingers.length; f++){
 				var finger = hand.fingers[f];
 				if(finger.extended) extendedFingers++;
 			}
-			//console.log(Math.round(hand.screenPosition()[0])+","+ Math.round(hand.screenPosition()[1]));
-			//console.log(cursorPosition[0] +","+ cursorPosition[1]);
+
 			var hoveringPlace = control.getHoveringPlace(cursorPosition);//hover:drawer or viewer
 		
 			//when one finger, hovering over a block 
 			if(extendedFingers == 1){
 				//1.If over drawer
 				if(hoveringPlace == "drawer" && control.currentBlock==null){//should allow to open drawer even though selected 
+					document.getElementById('feedback').innerHTML = 'Waiting for a new block';
 					control.openClosestFlyout(cursorPosition);
-					document.getElementById('user-said').innerHTML = "Select drawer";
+					
 				}else if(hoveringPlace == "viewer"){
 					if(Blockly.mainWorkspace.toolbox_.flyout_.isVisible()){	
 				//2.Over flyout(and current block is null)
@@ -135,14 +169,25 @@
 							//Is one block possible for move?
 							if(BLOCK_SELECTED_FOR_MOVE == null){
 								control.hoverOverFlyout(cursorPosition);
-								document.getElementById('user-said').innerHTML = "Searching in flyout";
+								//document.getElementById('feedback').innerHTML = "Use speech to move block after choosing.";
+								
 							}else{
-								control.getBlockFromDrawer(cursorPosition);
-								document.getElementById('user-said').innerHTML = "Selected from flyout";
-								control.closeFlyout();
+								if(spoken){
+									control.getBlockFromDrawer(cursorPosition);
+									document.getElementById('feedback').innerHTML = "Moving :)";
+									control.closeFlyout();
+									console.log("closed 1");
+								}else{
+									if(BLOCK_SELECTED_FOR_MOVE.svgGroup_ != null){
+										console.log(BLOCK_SELECTED_FOR_MOVE);
+										BLOCK_SELECTED_FOR_MOVE.unselectForOtherMove();
+									}
+									
+								}
 							}	
 						}else{
 							control.closeFlyout();
+							console.log("closed 2");
 						}
 					}else{
 				//3.Over viewer(flyout closed)
@@ -150,15 +195,23 @@
 							if(BLOCK_SELECTED_FOR_MOVE == null){
 								//find the closest block and highlight it
 								control.hoverOverViewer(cursorPosition);
-								document.getElementById('user-said').innerHTML = "Searching in viewer";
+								//document.getElementById('feedback').innerHTML = "Use speech to move block after choosing.";
 							}else{
-								document.getElementById('user-said').innerHTML = "Selected from viewer";
-								control.getBlockFromViewer(cursorPosition);
+								
+								if(spoken){
+									document.getElementById('feedback').innerHTML = "Moving :)";
+									control.getBlockFromViewer(cursorPosition);
+								}else{
+									if(BLOCK_SELECTED_FOR_MOVE != null){
+										BLOCK_SELECTED_FOR_MOVE.unselectForOtherMove();
+									}
+								}
+								
 							}
 						}else{
 							control.currentBlock.highlightClosestConnection();
 							control.moveHoldingBlock(cursorPosition);
-							document.getElementById('user-said').innerHTML = "Moving block";
+							document.getElementById('feedback').innerHTML = "Moving :)";
 						}
 					}					
 					
@@ -174,19 +227,20 @@
 						control.highlightCon();
 						control.stopMovingBlock();
 					}
+					if(BLOCK_SELECTED_FOR_MOVE != null){
+						BLOCK_SELECTED_FOR_MOVE.unselectForOtherMove();
+						
+					}
+					document.getElementById('feedback').innerHTML = "Waiting for a new block.";
 				}
 			}
-			
-			
-			
-			
+
 		}//hand
 			
 	}).use('screenPosition', {scale: 0.57});
 	
 	
-	
-	testProcessed = false;
+
 	var processSpeech = function(transcript){
 		testProcessed = false;
 		var userSaid = function(str, commands){
@@ -202,9 +256,11 @@
 		};
 		var spokenSetVariableX = false;
 		var spokenGetVariableX = false;
-		var candidateSet = ["set variable x","set variable X", "set durable x","set variable X","set the x","set the X", "set bearable X", "set bearable x"]
-		var candidateGet = ["variable x","variable X","X", "x","get variable x","get variable X", "get durable x","get durable X", 
-							"durable X", "durable x", "bearable x", "bearable X", "jet bearable X", "get X", "get x", "get verbal X", "get verbal x"]
+		spokenMove = false;
+		var candidateSet = ["variable i", "Variable I", "variable I", "bearable i", "bearable I", "set variable I'm", "set variable i'm", "set terrible I'm", "set terrible i'm", "set variable i","set variable I","set variable x","set variable X", "set durable x","set variable X","set the x","set the X", "set bearable X", "set bearable x"]
+		var candidateGet = []
+		var candidateMove = ['move', 'Move', 'Mo', 'Go', 'go', 'start', 'Start', 'star', 'Star','choose','Choose', 'Chose','chose'];
+		
 		candidateSet.forEach(function(candidate){
 			if(userSaid(transcript, candidate)){
 				spokenSetVariableX = true
@@ -217,6 +273,17 @@
 			}
 		})
 		
+		candidateMove.forEach(function(candidate){
+			if(userSaid(transcript, candidate)){
+				spokenMove = true
+			}
+		})
+		
+		if(spokenMove){
+			control.saidMove = true;
+		}
+		
+		
 		if(spokenSetVariableX){
 			setVariable();
 			getVariable();
@@ -228,8 +295,7 @@
 			
 		}
 
-		//console.log("processed: "+testProcessed);
-		
+	
 		return testProcessed
 		
 	}

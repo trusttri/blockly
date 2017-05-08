@@ -1,5 +1,5 @@
 html, body {
-  height: 100%;
+  width:100%; height:100%;
 }
 
 body {
@@ -184,13 +184,12 @@ button {
 	position: relative;
 }
 
-#cursor-canvas{
-	height: 100%;
-	width: 100%;
-	position: absolute;
-	z-index: 2;
-	pointer-events:none;
-}
+/* #cursor-canvas{ */
+	/* position: absolute; */
+	/* display:block; */
+	/* z-index: 2; */
+	/* pointer-events:none; */
+/* } */
 
 #main-table{
 	position: absolute;
@@ -200,4 +199,11 @@ button {
 #content_blocks{
 	z-index: 0;
 	pointer-events:visible;
+}
+
+#abs_mapping_stage{
+	position: absolute;
+	display:block;
+	z-index: 2;
+	pointer-events:none;
 }
