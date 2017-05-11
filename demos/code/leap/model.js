@@ -10,6 +10,7 @@
 		this.workSpace = Blockly.mainWorkspace;
 	}
 	
+	
 
 	Control.prototype.getHoveringPlace = function(cursorPosition){
 		var currentX = cursorPosition[0];
@@ -283,4 +284,9 @@
 		
 	}
 	
+	
+	Control.prototype.shrinkSize = function(){
+		var svg = Blockly.mainWorkspace.getParentSvg();
+		svg.setAttribute('width','600px');
+	}
 	

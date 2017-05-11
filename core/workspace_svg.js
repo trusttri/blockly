@@ -1585,6 +1585,7 @@ Blockly.WorkspaceSvg.prototype.updateGridPattern_ = function() {
  * @this Blockly.WorkspaceSvg
  */
 Blockly.WorkspaceSvg.getTopLevelWorkspaceMetrics_ = function() {
+  
   var svgSize = Blockly.svgSize(this.getParentSvg());
   if (this.toolbox_) {
     if (this.toolboxPosition == Blockly.TOOLBOX_AT_TOP ||
@@ -1595,6 +1596,7 @@ Blockly.WorkspaceSvg.getTopLevelWorkspaceMetrics_ = function() {
       svgSize.width -= this.toolbox_.getWidth();
     }
   }
+  
   // Set the margin to match the flyout's margin so that the workspace does
   // not jump as blocks are added.
   var MARGIN = Blockly.Flyout.prototype.CORNER_RADIUS - 1;

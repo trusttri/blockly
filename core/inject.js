@@ -53,9 +53,25 @@ Blockly.inject = function(container, opt_options) {
     throw 'Error: container is not in current document.';
   }
   var options = new Blockly.Options(opt_options || {});
+
   var subContainer = goog.dom.createDom('div', 'injectionDiv');
   container.appendChild(subContainer);
-  var svg = Blockly.createDom_(subContainer, options);
+
+
+    // var blockDiv = document.createElement('div');
+    // blockDiv.setAttribute("id", "blockDiv");
+    // subContainer.appendChild(blockDiv);
+    // //create div for VR
+    // var vrDiv = document.createElement('div');
+    // vrDiv.setAttribute("id", "vrDiv");
+    // subContainer.appendChild(vrDiv);
+
+
+    var svg = Blockly.createDom_(subContainer, options);
+  console.log(subContainer);
+  console.log(svg);
+
+
 
   // Create surfaces for dragging things. These are optimizations
   // so that the broowser does not repaint during the drag.
@@ -112,6 +128,8 @@ Blockly.createDom_ = function(container, options) {
     ... filters go here ...
   </defs>
   */
+  console.log("svg");
+  console.log(svg);
   var defs = Blockly.utils.createSvgElement('defs', {}, svg);
   // Each filter/pattern needs a unique ID for the case of multiple Blockly
   // instances on a page.  Browser behaviour becomes undefined otherwise.

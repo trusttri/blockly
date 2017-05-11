@@ -40,6 +40,65 @@
 		control.blocks.push(control.currentBlock);
 		control.currentBlock = null;
 	}
+	mapCursor = function(){
+			var abs = {};
+			abs.width = window.innerWidth;
+			abs.height = window.innerHeight;
+			abs.stage = new Kinetic.Stage({
+					container: 'abs_mapping_stage',
+					width: abs.width,
+					height: abs.height
+			});
+
+			abs.layer = new Kinetic.Layer();
+
+			
+			abs.tip = new Kinetic.Circle({
+					x: 239,
+					y: 75,
+					radius: 10,
+					fill: 'green',
+					stroke: 'black',
+					strokeWidth: 3.5,
+					opacity:.5,
+					visible: true
+				  });
+
+			abs.layer.add(abs.tip);
+			abs.stage.add(abs.layer);
+			
+			
+
+			abs.scale = 600/470;
+			abs.anim = new Kinetic.Animation(function(frame) {
+				var leap_frame = leapController.frame(); //leap is a connected leapController object
+				if(leap_frame.valid && leap_frame.pointables.length > 0){
+				   //pointable = leap_frame.pointables[0];
+				   //abs.tip.x(pointable.tipPosition[0] * abs.scale + abs.width/2);
+				   //abs.tip.y(abs.height - pointable.tipPosition[1] * abs.scale);
+					var hand = leap_frame.hands[0];
+					var leapPoint = hand.fingers[1].tipPosition;
+					var iBox = leap_frame.interactionBox;
+					var normalizedPoint = iBox.normalizePoint(leapPoint, true);
+					
+					//var appX = normalizedPoint[0] * .innerWidth;
+					//var appY = (1 - normalizedPoint[1]) * window.innerHeight;
+					var appX = normalizedPoint[0] * windowSize[0]
+					var appY = (1 - normalizedPoint[1]) * windowSize[1]
+				   
+				   abs.tip.x(appX);
+				   abs.tip.y(appY);
+				} else if (abs.tip.y() < 0){
+				   abs.tip.x(abs.width/2);
+				   abs.tip.y(abs.height/2);     
+				}
+
+			}, abs.layer);
+
+			abs.anim.start();
+		
+	}
+	
 	
 	
 

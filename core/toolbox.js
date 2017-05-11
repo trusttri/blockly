@@ -71,8 +71,8 @@ Blockly.Toolbox = function(workspace) {
    * Position of the toolbox and flyout relative to the workspace.
    * @type {number}
    */
-  this.toolboxPosition = workspace.options.toolboxPosition;
-
+  //this.toolboxPosition = workspace.options.toolboxPosition;
+	this.toolboxPosition = Blockly.TOOLBOX_AT_TOP;
   /**
    * Configuration constants for Closure's tree UI.
    * @type {Object.<string,*>}
@@ -154,9 +154,13 @@ Blockly.Toolbox.prototype.init = function() {
    */
   this.HtmlDiv =
       goog.dom.createDom(goog.dom.TagName.DIV, 'blocklyToolboxDiv');
+  this.HtmlDiv.style.width = "100%";
   this.HtmlDiv.setAttribute('dir', workspace.RTL ? 'RTL' : 'LTR');
-  svg.parentNode.insertBefore(this.HtmlDiv, svg);
 
+  var toolboxDiv = document.getElementById('toolbox-div');
+  toolboxDiv.appendChild(this.HtmlDiv);
+  console.log("htmlll");
+  console.log(this.HtmlDiv);
   // Clicking on toolbox closes popups.
   Blockly.bindEventWithChecks_(this.HtmlDiv, 'mousedown', this,
       function(e) {
@@ -428,17 +432,19 @@ Blockly.Toolbox.prototype.getClientRect = function() {
 
   // Assumes that the toolbox is on the SVG edge.  If this changes
   // (e.g. toolboxes in mutators) then this code will need to be more complex.
-  if (this.toolboxPosition == Blockly.TOOLBOX_AT_LEFT) {
-    return new goog.math.Rect(-BIG_NUM, -BIG_NUM, BIG_NUM + x + width,
-        2 * BIG_NUM);
-  } else if (this.toolboxPosition == Blockly.TOOLBOX_AT_RIGHT) {
-    return new goog.math.Rect(x, -BIG_NUM, BIG_NUM + width, 2 * BIG_NUM);
-  } else if (this.toolboxPosition == Blockly.TOOLBOX_AT_TOP) {
-    return new goog.math.Rect(-BIG_NUM, -BIG_NUM, 2 * BIG_NUM,
+  return new goog.math.Rect(-BIG_NUM, -BIG_NUM, 2 * BIG_NUM,
         BIG_NUM + y + height);
-  } else {  // Bottom
-    return new goog.math.Rect(0, y, 2 * BIG_NUM, BIG_NUM + width);
-  }
+  // if (this.toolboxPosition == Blockly.TOOLBOX_AT_LEFT) {
+    // return new goog.math.Rect(-BIG_NUM, -BIG_NUM, BIG_NUM + x + width,
+        // 2 * BIG_NUM);
+  // } else if (this.toolboxPosition == Blockly.TOOLBOX_AT_RIGHT) {
+    // return new goog.math.Rect(x, -BIG_NUM, BIG_NUM + width, 2 * BIG_NUM);
+  // } else if (this.toolboxPosition == Blockly.TOOLBOX_AT_TOP) {
+    // return new goog.math.Rect(-BIG_NUM, -BIG_NUM, 2 * BIG_NUM,
+        // BIG_NUM + y + height);
+  // } else {  // Bottom
+    // return new goog.math.Rect(0, y, 2 * BIG_NUM, BIG_NUM + width);
+  // }
 };
 
 /**

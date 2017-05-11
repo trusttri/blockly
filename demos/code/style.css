@@ -209,3 +209,23 @@ button {
 	z-index: 2;
 	pointer-events:none;
 }
+
+#canvas_special {
+  width: 400px;
+  height: 400px;
+
+  z-index:-100;
+}
+
+.toolbox-div{
+  width:100%;
+}
+
+.blocklyToolboxDiv{
+
+  width:100%;
+}
+.td{
+
+  height:75%;
+}

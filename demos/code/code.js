@@ -166,20 +166,20 @@ Code.changeLanguage = function() {
     window.sessionStorage.loadOnceBlocks = text;
   }
 
-  var languageMenu = document.getElementById('languageMenu');
-  var newLang = encodeURIComponent(
-      languageMenu.options[languageMenu.selectedIndex].value);
-  var search = window.location.search;
-  if (search.length <= 1) {
-    search = '?lang=' + newLang;
-  } else if (search.match(/[?&]lang=[^&]*/)) {
-    search = search.replace(/([?&]lang=)[^&]*/, '$1' + newLang);
-  } else {
-    search = search.replace(/\?/, '?lang=' + newLang + '&');
-  }
+  // var languageMenu = document.getElementById('languageMenu');
+  // var newLang = encodeURIComponent(
+      // languageMenu.options[languageMenu.selectedIndex].value);
+  // var search = window.location.search;
+  // if (search.length <= 1) {
+    // search = '?lang=' + newLang;
+  // } else if (search.match(/[?&]lang=[^&]*/)) {
+    // search = search.replace(/([?&]lang=)[^&]*/, '$1' + newLang);
+  // } else {
+    // search = search.replace(/\?/, '?lang=' + newLang + '&');
+  // }
 
-  window.location = window.location.protocol + '//' +
-      window.location.host + window.location.pathname + search;
+  // window.location = window.location.protocol + '//' +
+      // window.location.host + window.location.pathname + search;
 };
 
 /**
@@ -358,7 +358,6 @@ Code.renderContent = function() {
  * Initialize Blockly.  Called on page load.
  */
 Code.init = function() {
-  Code.initLanguage();
 
   var rtl = Code.isRtl();
   var container = document.getElementById('content_area');
@@ -390,6 +389,28 @@ Code.init = function() {
       function(m, p1) {return MSG[p1];});
   var toolboxXml = Blockly.Xml.textToDom(toolboxText);
 
+  /*
+  
+
+var options = { 
+	toolbox : toolbox, 
+	collapse : true, 
+	comments : true, 
+	disable : true, 
+	maxBlocks : Infinity, 
+	trashcan : true, 
+	horizontalLayout : true, 
+	toolboxPosition : 'start', 
+	css : true, 
+	media : 'https://blockly-demo.appspot.com/static/media/', 
+	rtl : false, 
+	scrollbars : true, 
+	sounds : true, 
+	oneBasedIndex : true
+};
+/* newly created toolbox */
+  var toolbox = document.getElementById("toolbox");
+
   Code.workspace = Blockly.inject('content_blocks',
       {grid:
           {spacing: 25,
@@ -398,10 +419,13 @@ Code.init = function() {
            snap: true},
        media: '../../media/',
        rtl: rtl,
-       toolbox: toolboxXml,
+       toolbox : toolbox,
+	   horizontalLayout : true, 
+	   scrollbars : false, 
        zoom:
-           {controls: true,
-            wheel: true}
+           {controls: false,
+            wheel: false}
+			
       });
 
   // Add to reserved word list: Local variables in execution environment (runJS)
@@ -440,55 +464,17 @@ Code.init = function() {
   }
   onresize();
   Blockly.svgResize(Code.workspace);
+  
+  //resize for VR div
+  var svg = Code.workspace.getParentSvg();
+  svg.setAttribute('width','600px');
+  Blockly.svgResize(Code.workspace);
 
   // Lazy-load the syntax-highlighting.
   window.setTimeout(Code.importPrettify, 1);
 };
 
-/**
- * Initialize the page language.
- */
-Code.initLanguage = function() {
-  // Set the HTML's language and direction.
-  var rtl = Code.isRtl();
-  document.dir = rtl ? 'rtl' : 'ltr';
-  document.head.parentElement.setAttribute('lang', Code.LANG);
 
-  // Sort languages alphabetically.
-  var languages = [];
-  for (var lang in Code.LANGUAGE_NAME) {
-    languages.push([Code.LANGUAGE_NAME[lang], lang]);
-  }
-  var comp = function(a, b) {
-    // Sort based on first argument ('English', 'Русский', '简体字', etc).
-    if (a[0] > b[0]) return 1;
-    if (a[0] < b[0]) return -1;
-    return 0;
-  };
-  languages.sort(comp);
-  // Populate the language selection menu.
-  var languageMenu = document.getElementById('languageMenu');
-  languageMenu.options.length = 0;
-  for (var i = 0; i < languages.length; i++) {
-    var tuple = languages[i];
-    var lang = tuple[tuple.length - 1];
-    var option = new Option(tuple[0], lang);
-    if (lang == Code.LANG) {
-      option.selected = true;
-    }
-    languageMenu.options.add(option);
-  }
-  languageMenu.addEventListener('change', Code.changeLanguage, true);
-
-  // Inject language strings.
-  //document.title += ' ' + MSG['title'];
-  //document.getElementById('title').textContent = MSG['title'];
-  document.getElementById('tab_blocks').textContent = MSG['blocks'];
-
-  // document.getElementById('linkButton').title = MSG['linkTooltip'];
-  // document.getElementById('runButton').title = MSG['runTooltip'];
-  // document.getElementById('trashButton').title = MSG['trashTooltip'];
-};
 
 /**
  * Execute the user's code.
