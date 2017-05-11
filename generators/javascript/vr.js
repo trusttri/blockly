@@ -19,6 +19,6 @@ Blockly.JavaScript['set_color'] = function(block) {
     var value_id = Blockly.JavaScript.valueToCode(block, 'ID', Blockly.JavaScript.ORDER_ATOMIC);
     var colour_name = block.getFieldValue('NAME');
     // TODO: Assemble JavaScript into code variable.
-    var code = 'setColor(' + value_id +", " + colour_name +');\n';
+    var code = 'setColor(' + value_id +", '" + colour_name +'\');\n';
     return code;
 };

@@ -722,6 +722,9 @@ Blockly.Flyout.prototype.hide = function() {
   }
   // Do NOT delete the blocks here.  Wait until Flyout.show.
   // https://neil.fraser.name/news/2014/08/09/
+
+    //z-index setting for vr-canvas
+    document.getElementById('canvas_special').style["zIndex"] = 1000;
 };
 
 /**
@@ -730,6 +733,8 @@ Blockly.Flyout.prototype.hide = function() {
  *     Variables and procedures have a custom set of blocks.
  */
 Blockly.Flyout.prototype.show = function(xmlList) {
+
+
   this.workspace_.setResizesEnabled(false);
   this.hide();
   this.clearOldBlocks_();
@@ -790,6 +795,8 @@ Blockly.Flyout.prototype.show = function(xmlList) {
         gaps.push(default_gap);
       }
     }
+      //z-index setting for vr-canvas
+      document.getElementById('canvas_special').style["zIndex"] = -1000
   }
 
   this.layout_(contents, gaps);
