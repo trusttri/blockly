@@ -292,6 +292,8 @@ Blockly.Css.CONTENT = [
   '.blocklyFlyout {',
     'position: absolute;',
     'z-index: 20;',
+    'height:300px;',
+
   '}',
   '.blocklyFlyoutButton {',
     'fill: #888;',
@@ -505,11 +507,12 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.blocklyTreeRow {',
-    'height: 57px;',
+    'height: 90px;',
     'line-height: 57px;',
     'margin-bottom: 3px;',
     'padding-right: 8px;',
     'white-space: nowrap;',
+    'width: 180px;',
   '}',
 
   '.blocklyHorizontalTree {',

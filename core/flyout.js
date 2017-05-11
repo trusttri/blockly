@@ -218,21 +218,23 @@ Blockly.Flyout.prototype.MARGIN = Blockly.Flyout.prototype.CORNER_RADIUS;
  * element.
  * @const {number}
  */
-Blockly.Flyout.prototype.GAP_X = Blockly.Flyout.prototype.MARGIN * 3;
+//Blockly.Flyout.prototype.GAP_X = Blockly.Flyout.prototype.MARGIN * 3;
+Blockly.Flyout.prototype.GAP_X = Blockly.Flyout.prototype.MARGIN * 9;
 
 /**
  * Gap between items in vertical flyouts. Can be overridden with the "sep"
  * element.
  * @const {number}
  */
-Blockly.Flyout.prototype.GAP_Y = Blockly.Flyout.prototype.MARGIN * 3;
+//Blockly.Flyout.prototype.GAP_Y = Blockly.Flyout.prototype.MARGIN * 3;
+Blockly.Flyout.prototype.GAP_Y = Blockly.Flyout.prototype.MARGIN * 9;
 
 /**
  * Top/bottom padding between scrollbar and edge of flyout background.
  * @type {number}
  * @const
  */
-Blockly.Flyout.prototype.SCROLLBAR_PADDING = 2;
+Blockly.Flyout.prototype.SCROLLBAR_PADDING = 10;
 
 /**
  * Width of flyout.
@@ -401,7 +403,7 @@ Blockly.Flyout.prototype.getMetrics_ = function() {
     var optionBox = {height: 0, y: 0, width: 0, x: 0};
   }
 
-  var absoluteTop = this.SCROLLBAR_PADDING;
+  var absoluteTop = this.SCROLLBAR_PADDING + 10;
   var absoluteLeft = this.SCROLLBAR_PADDING;
   if (this.horizontalLayout_) {
     if (this.toolboxPosition_ == Blockly.TOOLBOX_AT_BOTTOM) {
@@ -422,7 +424,8 @@ Blockly.Flyout.prototype.getMetrics_ = function() {
   }
 
   var metrics = {
-    viewHeight: viewHeight,
+    //viewHeight: viewHeight,
+      viewHeight: 500,
     viewWidth: viewWidth,
     contentHeight: (optionBox.height + 2 * this.MARGIN) * this.workspace_.scale,
     contentWidth: (optionBox.width + 2 * this.MARGIN) * this.workspace_.scale,
@@ -433,6 +436,7 @@ Blockly.Flyout.prototype.getMetrics_ = function() {
     absoluteTop: absoluteTop,
     absoluteLeft: absoluteLeft
   };
+  console.log(metrics);
   return metrics;
 };
 
@@ -584,7 +588,7 @@ Blockly.Flyout.prototype.setBackgroundPathHorizontal_ = function(width,
     // Top.
     path.push('h', width + 2 * this.CORNER_RADIUS);
     // Right.
-    path.push('v', height);
+    path.push('v', height * 3);
     // Bottom.
     path.push('a', this.CORNER_RADIUS, this.CORNER_RADIUS, 0, 0, 1,
         -this.CORNER_RADIUS, this.CORNER_RADIUS);
