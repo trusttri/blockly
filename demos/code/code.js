@@ -399,9 +399,11 @@ Code.init = function() {
        media: '../../media/',
        rtl: rtl,
        toolbox: toolboxXml,
+          horizontalLayout: true,
+          scrollbars:false,
        zoom:
-           {controls: true,
-            wheel: true}
+           {controls: false,
+            wheel: false}
       });
 
   // Add to reserved word list: Local variables in execution environment (runJS)
