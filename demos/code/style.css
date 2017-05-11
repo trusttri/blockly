@@ -1,5 +1,8 @@
 html, body {
   width:100%; height:100%;
+  margin: 0px;
+  padding: 0;
+  overflow: hidden;
 }
 
 body {
@@ -213,7 +216,8 @@ button {
 #canvas_special {
   width: 400px;
   height: 400px;
-
+  position:absolute;
+  margin-left: 600px;
   z-index:-100;
 }
 

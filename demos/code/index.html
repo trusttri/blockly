@@ -5,7 +5,7 @@
     <meta name="google" value="notranslate">
 
 
-
+    <!--vr-->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0, shrink-to-fit=no">
     <meta name="mobile-web-app-capable" content="yes">
@@ -56,22 +56,23 @@
         });
     </script>
 
-    <script src="vr/vr-js/node_modules/three/three.js"></script>
-    <script src="vr/vr-js/node_modules/three/examples/js/controls/OrbitControls.js"></script>
-    <script src="vr/vr-js/node_modules/three/examples/js/controls/VRControls.js"></script>
-    <script src="vr/vr-js/node_modules/three/examples/js/effects/VREffect.js"></script>
-    <script src="vr/vr-js/polyfill/webvr-polyfill.js"></script>
-    <script src="vr/vr-js/Reticulum/reticulum.js"></script>
-    <script src = "vr/vr-js/Physijs/physi.js"></script>
-    <script src = "vr/vr-js/obj_js/OBJMTLLoader.js"></script>
-    <script src="vr/vr-js/obj_js/MTLLoader.js"></script>
-    <script src="vr/vr-js/obj_js/OBJLoader.js"></script>
-    <script src="vr/vr-js/background.js"></script>
-    <script src="vr/vr-js/block_functions.js?rnd=373913"></script>
-    <script src="vr/vr-js/label.js"></script>
+    <script src="../js/node_modules/three/three.js"></script>
+    <script src="../js/node_modules/three/examples/js/controls/OrbitControls.js"></script>
+    <script src="../js/node_modules/three/examples/js/controls/VRControls.js"></script>
+    <script src="../js/node_modules/three/examples/js/effects/VREffect.js"></script>
+    <script src="../js/polyfill/webvr-polyfill.js"></script>
+    <script src="../js/Reticulum/reticulum.js"></script>
+    <script src = "../js/Physijs/physi.js"></script>
+    <script src = "obj_js/OBJMTLLoader.js"></script>
+    <script src="obj_js/MTLLoader.js"></script>
+    <script src="obj_js/OBJLoader.js"></script>
+    <script src="background.js"></script>
+    <script src="block_functions.js?rnd=373913"></script>
+    <script src="label.js"></script>
 
 </head>
 <body>
+<div id="canvas_special"></div>
 <div id="main-wrapper">
     <!-- <canvas id="cursor-canvas"></canvas> -->
     <div id="abs_mapping_stage" style=""></div>
@@ -114,7 +115,7 @@
                 <div id="content_blocks" class="content"></div>
             </td>
             <td>
-                <div id="canvas_special"></div>
+
             </td>
         </tr>
     </table>
@@ -373,7 +374,6 @@
     //mini container
     container = document.getElementById('canvas_special');
     console.log(container);
-    document.body.appendChild(container);
 
     Physijs.scripts.worker = 'physijs_worker.js';
     Physijs.scripts.ammo = 'ammo.js';
@@ -381,7 +381,6 @@
     //renderer.setPixelRatio(Math.floor(window.devicePixelRatio));
     renderer.setSize(CANVAS_SIZE, CANVAS_SIZE);
     container.appendChild(renderer.domElement);
-    document.body.appendChild(container);
 
     scene = new Physijs.Scene({ fixedTimeStep: 1 / 120 });
     scene.setGravity(new THREE.Vector3( 0, -10, 0 ));
