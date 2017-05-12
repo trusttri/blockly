@@ -212,11 +212,6 @@ button {
 }
 
 #canvas_special{
-
-  width:400px;
-  height:400px;
   position:absolute;
-  margin-top: 150px;
-  margin-left: 600px;
   z-index: 100;
 }

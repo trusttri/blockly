@@ -182,6 +182,8 @@ Blockly.svgResize = function(workspace) {
     svg.setAttribute('height', height + 'px');
     svg.cachedHeight_ = height;
   }
+  //space left when subtracting vr editor's part
+    svg.setAttribute('width', window.innerWidth*0.6 +'px');
   mainWorkspace.resize();
 };
 

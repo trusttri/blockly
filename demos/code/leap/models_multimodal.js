@@ -1,18 +1,17 @@
 
-	var BLOCK_CATEGORIES = ["Colour","Logic", "Loops", "Math", "Text", "Lists",  "","Variables", "Functions"];
+	var BLOCK_CATEGORIES = ["VR functions","Logic", "Loops", "Math","Variables"];
 	var category_index = -1;
-	var FLYOUT_BLOCKS_HEIGHTS = {"Colour":[], "Logic":[], "Loops":[], "Math":[], "Text":[], "Lists":[], "Variables":[], "Functions":[]};
-	var FLYOUT_RANGE = {"Colour":[], "Logic":[], "Loops":[], "Math":[], "Text":[], "Lists":[],  "Variables":[], "Functions":[]};
+	var FLYOUT_BLOCKS_WIDTHS = {"VR functions":[], "Logic":[], "Loops":[], "Math":[], "Variables":[]};
+	var FLYOUT_RANGE = {"VR functions":[], "Logic":[], "Loops":[], "Math":[], "Variables":[]};
 	var BLOCK_SELECTED_FOR_MOVE;
 	var init = true;
+	var COUNT_DRAWERS = 5;
 	// Blockly.INPUT_VALUE = 1;
 	// Blockly.OUTPUT_VALUE = 2;
 	// Blockly.NEXT_STATEMENT = 3;
 	// Blockly.PREVIOUS_STATEMENT = 4;
 	// Blockly.DUMMY_INPUT = 5;
-	
-	
-		
+
 		
 	Control = function(){
 	
@@ -21,10 +20,8 @@
 		this.blocks = [];
 		this.currentBlock = null;
 		this.candidateBlock = null;
-		this.candidateConnection = null;
 		this.workSpace = Blockly.mainWorkspace;
-		this.timestamp = 0;
-		this.hovered_start_time = 0;
+
 		
 	}
 	
@@ -32,46 +29,37 @@
 	
 
 	Control.prototype.getHoveringPlace = function(cursorPosition){
-		var currentX = cursorPosition[0];
-		var DRAWER_BOUNDARY = document.getElementsByClassName('blocklyToolboxDiv')[0].offsetWidth + 20;
-		if(currentX < DRAWER_BOUNDARY){
+		var currentY = cursorPosition[1];
+		var DRAWER_BOUNDARY =  document.getElementsByClassName('blocklyToolboxDiv')[0].offsetHeight + document.getElementsByClassName('tabmax')[0].offsetHeight;
+		if(currentY <= DRAWER_BOUNDARY){
 			return "drawer";
 		}
 		return "viewer";
 	}
 	
 	Control.prototype.createVariable = function(variableName){
-		Blockly.mainWorkspace.toolbox_.tree_.getChildren()[7].select();
+		Blockly.mainWorkspace.toolbox_.tree_.getChildren()[5].select();
 		Blockly.mainWorkspace.createVariable(variableName)
 	}
 
 
 	Control.prototype.openClosestFlyout = function(cursorPosition){
-		//Control, Logic, Math, Text, Lists, Colors, Variables, Procedures
-		var currentY = cursorPosition[1];
-		var CATEGORY_STARTING_POINT = document.getElementById('content_blocks').offsetTop;
-		var CATEGORY_SECTION_HEIGHT = document.getElementsByClassName('blocklyTreeRow')[1].offsetHeight; //26.55;
-		if(CATEGORY_STARTING_POINT<currentY && currentY <= CATEGORY_STARTING_POINT+CATEGORY_SECTION_HEIGHT){
+		var currentY = cursorPosition[0];
+		var CATEGORY_WIDTH = document.getElementsByClassName('blocklyToolboxDiv')[0].offsetWidth/COUNT_DRAWERS;
+		if( currentY <= CATEGORY_WIDTH ){
 			category_index = 0;
-		}else if(CATEGORY_STARTING_POINT+CATEGORY_SECTION_HEIGHT<currentY && currentY <= CATEGORY_STARTING_POINT+CATEGORY_SECTION_HEIGHT*2){
+		}else if(CATEGORY_WIDTH < currentY && currentY <= CATEGORY_WIDTH * 2){
 			category_index = 1;
-		}else if(CATEGORY_STARTING_POINT+CATEGORY_SECTION_HEIGHT*2<currentY && currentY <= CATEGORY_STARTING_POINT+CATEGORY_SECTION_HEIGHT*3){
+		}else if(CATEGORY_WIDTH * 2 < currentY && currentY <= CATEGORY_WIDTH * 3){
 			category_index = 2;
-		}else if(CATEGORY_STARTING_POINT+CATEGORY_SECTION_HEIGHT*3<currentY && currentY <= CATEGORY_STARTING_POINT+CATEGORY_SECTION_HEIGHT*4){
+		}else if(CATEGORY_WIDTH * 3 < currentY && currentY <= CATEGORY_WIDTH * 4){
 			category_index = 3;
-		}else if(CATEGORY_STARTING_POINT+CATEGORY_SECTION_HEIGHT*4<currentY && currentY <= CATEGORY_STARTING_POINT+CATEGORY_SECTION_HEIGHT*5){
+		}else{
 			category_index = 4;
-		}else if(CATEGORY_STARTING_POINT+CATEGORY_SECTION_HEIGHT*5<currentY && currentY <= CATEGORY_STARTING_POINT+CATEGORY_SECTION_HEIGHT*6){
-			category_index = 5;
-		}else if(CATEGORY_STARTING_POINT+CATEGORY_SECTION_HEIGHT*6<currentY){
-			category_index = 7;
-		// }else if(CATEGORY_STARTING_POINT+CATEGORY_SECTION_HEIGHT*7<currentY && currentY <= CATEGORY_STARTING_POINT+CATEGORY_SECTION_HEIGHT*8){
-			// category_index = 6;
 		}
 		if(category_index != -1){
 			control.chosenDrawer = BLOCK_CATEGORIES[category_index];
 			Blockly.mainWorkspace.toolbox_.tree_.getChildren()[category_index].select();
-			
 		}
 
 	}
@@ -83,110 +71,77 @@
 		
 	}
 
-	Control.prototype.hoverOverViewer = function(cursorPosition){
-		var shortestDistance = 1000;
-		var closestBlock = null;
+    Control.prototype.hoverOverViewer = function(cursorPosition){
+        this.candidateBlock = null;
+        var shortestDistance = 1000;
+        var closestBlock = null;
+        if(BLOCK_SELECTED_FOR_MOVE!=null && cursorPosition[2] > 80){
+            BLOCK_SELECTED_FOR_MOVE.unselectForOtherMove()
 
-		
-		var fingerOffset = [document.getElementsByClassName('blocklyToolboxDiv')[0].offsetWidth, document.getElementById('content_blocks').offsetTop];
-		var processedCursor = [cursorPosition[0] - fingerOffset[0], cursorPosition[1] - fingerOffset[1] ]
+        }
+        if(!Blockly.mainWorkspace.toolbox_.flyout_.isVisible()){//flyout should be closed
+            this.blocks.forEach(function(block){
+                var blockX = block.blockSvg.getRelativeToSurfaceXY()['x'];
+                var blockY = block.blockSvg.getRelativeToSurfaceXY()['y'];
+                var deltaX = cursorPosition[0] - blockX;
+                var deltaY = cursorPosition[1] - blockY;
+                var distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+                if(distance < shortestDistance){
+                    closestBlock = block;
+                    shortestDistance = distance;
 
-		if(!Blockly.mainWorkspace.toolbox_.flyout_.isVisible()){//flyout should be closed
-			this.blocks.forEach(function(block){
-				var blockX = block.blockSvg.getRelativeToSurfaceXY()['x'];
-				var blockY = block.blockSvg.getRelativeToSurfaceXY()['y'];
-				var deltaX = processedCursor[0] - blockX;
-				var deltaY = processedCursor[1] - blockY;
-				var distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
-				if(distance < shortestDistance){
-					closestBlock = block;
-					shortestDistance = distance;	
-				}	
-			});
-			if(closestBlock!=null){
-				//if there was a candidate block already                                         
-				if(this.candidateBlock != null){
-					if(this.candidateBlock != closestBlock){//if it is a new closest block
-						if(BLOCK_SELECTED_FOR_MOVE != null){
-							BLOCK_SELECTED_FOR_MOVE.unselectForOtherMove();
-						}
-						this.hovered_start_time = this.timestamp ;
-						this.candidateBlock = closestBlock;
-						closestBlock.highlight();
-					}else{//if it is the same block as old candidate block
-						if((this.timestamp  - this.hovered_start_time)>2000000){
-							
-							this.candidateBlock.blockSvg.selectForMove()
-						}
-					}	
-				}else{//if there wasn't a candidate block 
-					this.hovered_start_time = this.timestamp ;
-					this.candidateBlock = closestBlock;
-					closestBlock.highlight();
-				}
-			document.getElementById('feedback').innerHTML = (3 - ((this.timestamp  - this.hovered_start_time)/1000000)|0)+ '  sec left';;
-			}else{
-				document.getElementById('feedback').innerHTML = 'Waiting for a new block';
-			}
-		}
-		
-	}
+                }
 
-	Control.prototype.hoverOverFlyout = function(cursorPosition){
-		if(Blockly.mainWorkspace.toolbox_.flyout_.isVisible()){
-			var blocksBoundary = FLYOUT_RANGE[control.chosenDrawer];
-			if(blocksBoundary != null){
-				for(var i=0 ; i<(blocksBoundary.length-1); i++){
-					var currentY = cursorPosition[1];
-					if(blocksBoundary[i] < currentY && currentY < blocksBoundary[i+1]){
-						var blockSvg = Blockly.mainWorkspace.toolbox_.flyout_.currentBlocks[i];
-						if(this.candidateBlock != null){
-							
-							if(this.candidateBlock.blockSvg != blockSvg){
-								//console.log("case 1: new one");
-								 if(BLOCK_SELECTED_FOR_MOVE != null){
-									 BLOCK_SELECTED_FOR_MOVE.unselectForOtherMove(); 
-								 }
-								//new block for candidate
-								this.hovered_start_time = this.timestamp;
-								this.candidateBlock = new Block(blockSvg, cursorPosition);
-								this.candidateBlock.highlight();
-								
-							}else{//hovering over same block
-								//check if hovered over enough timestamp
-								if((this.timestamp  - this.hovered_start_time)>2000000){
-									//console.log("case 2: old one long hover");
-									this.candidateBlock.highlight();
-									this.candidateBlock.blockSvg.selectForMove()
-									
-								}else{
-									//console.log("case 3:: old one not enough");
-									this.candidateBlock.highlight();
-								}
-								
-							}
-						}else{
-							//console.log("case 4: completely new");
-							this.candidateBlock = new Block(blockSvg, cursorPosition);
-							this.hovered_start_time = this.timestamp;
-							this.candidateBlock.highlight();
-							
-						}
-						document.getElementById('feedback').innerHTML = (3 - ((this.timestamp  - this.hovered_start_time)/1000000)|0) + '  sec left';
-						break;
-					}			
-				}
-			}
-		}
-		
+            });
+            if(closestBlock!=null){
 
-	}
+                closestBlock.blockSvg.select();
+                if(cursorPosition[2] < 200){
+                    console.log("close");
+                    this.candidateBlock = closestBlock;
+                }
+            }
+        }
 
-	Control.prototype.getBlockFromViewer = function(cursorPosition){
-		var shortestDistance = 200;
-		var optimalBlock = null;
+    }
+
+    Control.prototype.hoverOverFlyout = function(cursorPosition){
+        this.candidateBlock = null;
+        if(Blockly.mainWorkspace.toolbox_.flyout_.isVisible()){
+
+            if(BLOCK_SELECTED_FOR_MOVE!=null && cursorPosition[2] > 200){
+                BLOCK_SELECTED_FOR_MOVE.unselectForOtherMove()
+
+            }
+
+            var blocksBoundary = FLYOUT_RANGE[control.chosenDrawer];
+            if(blocksBoundary != null){
+                for(var i=0 ; i<(blocksBoundary.length-1); i++){
+                    var currentY = cursorPosition[1];
+                    if(blocksBoundary[i] < currentY && currentY < blocksBoundary[i+1]){
+
+                        this.candidateBlock = Blockly.mainWorkspace.toolbox_.flyout_.currentBlocks[i];
+                        this.candidateBlock.select();
+                        console.log(this.candidateBlock);
+                        if(cursorPosition[2] < 80){
+
+                            //this.candidateBlock.selectForMove();
+                        }
+
+                        break;
+                    }
+                }
+            }
+        }
+
+
+    }
+
+
+    Control.prototype.getBlockFromViewer = function(cursorPosition){
 		if(this.candidateBlock !=null){
 			this.currentBlock = this.candidateBlock;
+            this.currentBlock.blockSvg.selectForMove();
 			this.currentBlock.highlight();
 			this.candidateBlock = null;
 		}
@@ -195,15 +150,15 @@
 
 	
 	Control.prototype.getBlockFromDrawer = function(cursorPosition){
-		if(Blockly.mainWorkspace.toolbox_.flyout_.isVisible() && Blockly.selected != null && BLOCK_SELECTED_FOR_MOVE != null ){
+		if(Blockly.mainWorkspace.toolbox_.flyout_.isVisible() && Blockly.selected != null ){
 			var blockElement = Blockly.mainWorkspace.toolbox_.tree_.getChildren()[0].blocks[0];
-			var newBlockSvg = Blockly.mainWorkspace.toolbox_.flyout_.placeNewBlock_(BLOCK_SELECTED_FOR_MOVE);
+			var newBlockSvg = Blockly.mainWorkspace.toolbox_.flyout_.placeNewBlock_(Blockly.selected);
 			this.currentBlock = new Block(newBlockSvg, cursorPosition);
-			newBlockSvg.selectForMove();
-			this.currentBlock.highlight();
-			this.blocks.push(this.currentBlock);
-			this.closeFlyout();
-			this.candidateBlock = null;
+            this.currentBlock.highlight();
+            this.blocks.push(this.currentBlock);
+            this.closeFlyout();
+            this.candidateBlock = null;
+            this.currentBlock.blockSvg.selectForMove()
 			
 		}
 		
@@ -217,16 +172,11 @@
 	}
 	
 	Control.prototype.stopMovingBlock = function(){	
-		document.getElementById('feedback').innerHTML = 'Waiting for a new block';
+
 		this.currentBlock.stopMove();
 		this.currentBlock = null;
-		this.candidateConnection = null;
 		if(Blockly.selected){
 			Blockly.selected.unselect();
-		}
-		if(BLOCK_SELECTED_FOR_MOVE != null){
-			BLOCK_SELECTED_FOR_MOVE.unselectForOtherMove();
-			this.hovered_start_time = this.timestamp;
 		}
 		
 	}
@@ -244,12 +194,12 @@
 		var blockElements = Blockly.mainWorkspace.toolbox_.flyout_.newCreatedBlocks;
 		blockElements.forEach(function(blockElement){
 				var blockSvg = Blockly.Xml.domToBlock(Blockly.mainWorkspace, blockElement);
-				var height = blockSvg.height;
+				var width = blockSvg.width;
 				blockSvg.dispose();
-				FLYOUT_BLOCKS_HEIGHTS["Variables"].push(height);
+				FLYOUT_BLOCKS_WIDTHS["Variables"].push(width);
 		});
 		var precedingBound = 0;
-		var positions = FLYOUT_BLOCKS_HEIGHTS["Variables"];
+		var positions = FLYOUT_BLOCKS_WIDTHS["Variables"];
 		FLYOUT_RANGE["Variables"].push(-50);
 		positions.forEach(function(blockLength){
 			var thisBound = 8*2+blockLength+precedingBound
@@ -260,30 +210,34 @@
 	
 	Control.prototype.getBlocksPositionInFlyout = function(){
 		var flyouts = Blockly.mainWorkspace.toolbox_.tree_.getChildren()
-		for(var i=0 ; i<6 ; i++){
+		for(var i=0 ; i<COUNT_DRAWERS  ; i++){
 			var blockElements = flyouts[i].blocks;
-			blockElements.forEach(function(blockElement){
-				var blockSvg = Blockly.Xml.domToBlock(Blockly.mainWorkspace, blockElement);
-				var height = blockSvg.height;
-				blockSvg.dispose();
-				FLYOUT_BLOCKS_HEIGHTS[BLOCK_CATEGORIES[i]].push(height);
-			});
+			if(typeof(blockElements) == "object"){
+                blockElements.forEach(function(blockElement){
+                    var blockSvg = Blockly.Xml.domToBlock(Blockly.mainWorkspace, blockElement);
+                    var width = blockSvg.width;
+                    blockSvg.dispose();
+                    FLYOUT_BLOCKS_WIDTHS[BLOCK_CATEGORIES[i]].push(width);
+                });
+			}
 		}		
 	}
 	
-	Control.prototype.getRange = function(){
-		var offset =  document.getElementById('content_blocks').offsetTop;
-		for(var i=0 ; i<6 ; i++){
-			var positions = FLYOUT_BLOCKS_HEIGHTS[BLOCK_CATEGORIES[i]];
+	Control.prototype.getBlockSectionRange = function(){
+		var offset = 8;
+		for(var i=0 ; i<COUNT_DRAWERS; i++){
+			var positions = FLYOUT_BLOCKS_WIDTHS[BLOCK_CATEGORIES[i]];
 			FLYOUT_RANGE[BLOCK_CATEGORIES[i]].push(-50);
 			
 			var precedingBound = 0;
 			var count = 0;
-			
+
 			positions.forEach(function(blockLength){
-				var thisBound = 8*2 + blockLength + precedingBound;
+				var thisBound;
 				if(count == 0){
-					thisBound += offset;
+					thisBound = offset + blockLength + Blockly.Flyout.prototype.GAP_X/2;
+				}else{
+                    thisBound = precedingBound + blockLength + Blockly.Flyout.prototype.GAP_X;
 				}
 				FLYOUT_RANGE[BLOCK_CATEGORIES[i]].push(thisBound);
 				precedingBound = thisBound;
@@ -525,7 +479,6 @@
 		
 		//check for disconnect
 		if((this.blockSvg.previousConnection != null && this.blockSvg.previousConnection.isConnected()) || (this.blockSvg.outputConnection != null && this.blockSvg.outputConnection.isConnected())){
-			console.log("pluggy");
 			console.log(this.unplug);
 			this.blockSvg.unplug();
 			this.unplug+=1;

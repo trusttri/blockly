@@ -443,7 +443,7 @@ Code.init = function() {
   onresize();
 
   var svg = Code.workspace.getParentSvg();
-  svg.setAttribute('width', '600px');
+  svg.setAttribute('width', window.innerWidth*0.6+ 'px');
   Blockly.svgResize(Code.workspace);
 
   // Lazy-load the syntax-highlighting.

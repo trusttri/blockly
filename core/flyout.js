@@ -406,7 +406,7 @@ Blockly.Flyout.prototype.getMetrics_ = function() {
   // var absoluteTop = this.SCROLLBAR_PADDING;
   // var absoluteLeft = this.SCROLLBAR_PADDING;
     var absoluteTop = 72;
-    var absoluteLeft = 7;
+    var absoluteLeft = 0;
   if (this.horizontalLayout_) {
     if (this.toolboxPosition_ == Blockly.TOOLBOX_AT_BOTTOM) {
       absoluteTop = 0;

@@ -510,14 +510,13 @@ Blockly.Css.CONTENT = [
     'height: 90px;',
     'line-height: 57px;',
     'margin-bottom: 3px;',
-    'padding-right: 8px;',
     'white-space: nowrap;',
-    'width: 180px;',
+    'width: 196.8px;',
   '}',
 
   '.blocklyHorizontalTree {',
     'float: left;',
-    'margin: 1px 5px 8px 0;',
+    'margin: 1px 0px 8px 0;',
   '}',
 
   '.blocklyHorizontalTreeRtl {',
