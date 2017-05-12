@@ -399,6 +399,7 @@ Code.init = function() {
        media: '../../media/',
        rtl: rtl,
        toolbox: toolboxXml,
+          toolboxPosition : 'end',
           horizontalLayout: true,
           scrollbars:false,
        zoom:
