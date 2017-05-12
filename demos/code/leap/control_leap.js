@@ -4,9 +4,7 @@ var control = new Control();
 var windowSize = [window.innerWidth, window.innerHeight];
 var leapFrame;
 var leapController;
-var testProcessed = false;
-var spokenMove = false;
-var spoken = true;
+
 
 handCursorUpdate = function (hand, frame) {
     //var leapPoint = hand.screenPosition();
@@ -33,30 +31,7 @@ checkInFlyout = function (cursorPosition) {
     return false;
 }
 
-setVariable = function () {
-    control.createVariable('x');
 
-    var newBlockSvg = Blockly.mainWorkspace.toolbox_.flyout_.placeNewBlock_(Blockly.mainWorkspace.toolbox_.flyout_.currentBlocks[0]);
-    control.currentBlock = new Block(newBlockSvg, cursorPosition);
-    control.closeFlyout()
-    control.currentBlock.blockSvg.select();
-    control.currentBlock.blockSvg.moveBy(200, 10)
-    control.blocks.push(control.currentBlock);
-    control.currentBlock = null;
-
-
-}
-
-getVariable = function () {
-    Blockly.mainWorkspace.toolbox_.tree_.getChildren()[7].select();
-    var newBlockSvg = Blockly.mainWorkspace.toolbox_.flyout_.placeNewBlock_(Blockly.mainWorkspace.toolbox_.flyout_.currentBlocks[2]);
-    control.currentBlock = new Block(newBlockSvg, cursorPosition);
-    control.closeFlyout()
-    control.currentBlock.blockSvg.select();
-    control.currentBlock.blockSvg.moveBy(200, 10)
-    control.blocks.push(control.currentBlock);
-    control.currentBlock = null;
-}
 
 resizeForCursor = function () {
     var c = document.getElementById("abs_mapping_stage");
@@ -156,7 +131,6 @@ leapController = Leap.loop({enableGestures: true}, function (frame) {
                 if (Blockly.mainWorkspace.toolbox_.flyout_.isVisible()) {
                     if (checkInFlyout(cursorPosition)) {
                         control.hoverOverFlyout(cursorPosition);
-
                     } else {
                         control.closeFlyout();
                     }
@@ -168,12 +142,10 @@ leapController = Leap.loop({enableGestures: true}, function (frame) {
                         //find the closest block and highlight it
                         control.hoverOverViewer(cursorPosition);
 
-
                     }
                 }
 
             }
-
 
         } else if (extendedFingers <= 1) { //hand is grabbing for something
             if (hoveringPlace == "viewer") {
@@ -205,63 +177,3 @@ leapController = Leap.loop({enableGestures: true}, function (frame) {
 
 }).use('screenPosition', {scale: 0.57});
 
-
-var processSpeech = function (transcript) {
-    // testProcessed = false;
-    // var userSaid = function (str, commands) {
-    //
-    //     commands = commands.split(" ").filter(function (word) {
-    //         return word.length > 0;
-    //     });
-    //     for (var i = 0; i < commands.length; i++) {
-    //         if (str.indexOf(commands[i]) < 0)
-    //             return false;
-    //     }
-    //     return true;
-    // };
-    // var spokenSetVariableX = false;
-    // var spokenGetVariableX = false;
-    // spokenMove = false;
-    // var candidateSet = ["variable i", "Variable I", "variable I", "bearable i", "bearable I", "set variable I'm", "set variable i'm", "set terrible I'm", "set terrible i'm", "set variable i", "set variable I", "set variable x", "set variable X", "set durable x", "set variable X", "set the x", "set the X", "set bearable X", "set bearable x"]
-    // var candidateGet = []
-    // var candidateMove = ['move', 'Move', 'Mo', 'Go', 'go', 'start', 'Start', 'star', 'Star', 'choose', 'Choose', 'Chose', 'chose'];
-    //
-    // candidateSet.forEach(function (candidate) {
-    //     if (userSaid(transcript, candidate)) {
-    //         spokenSetVariableX = true
-    //     }
-    // })
-    //
-    // candidateGet.forEach(function (candidate) {
-    //     if (userSaid(transcript, candidate)) {
-    //         spokenGetVariableX = true
-    //     }
-    // })
-    //
-    // candidateMove.forEach(function (candidate) {
-    //     if (userSaid(transcript, candidate)) {
-    //         spokenMove = true
-    //     }
-    // })
-    //
-    // if (spokenMove) {
-    //     control.saidMove = true;
-    // }
-    //
-    //
-    // if (spokenSetVariableX) {
-    //     setVariable();
-    //     getVariable();
-    //     testProcessed = true;
-    // }
-    // if (spokenGetVariableX) {
-    //     getVariable();
-    //     testProcessed = true;
-    //
-    // }
-    //
-    //
-    // return testProcessed
-
-}
-	
