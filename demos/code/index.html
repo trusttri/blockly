@@ -58,6 +58,7 @@
   <script src="background.js"></script>
   <script src="block_functions.js?rnd=373913"></script>
   <script src="label.js"></script>
+  <script src="../js/tween.js"></script>
 
 </head>
 <body>
@@ -96,9 +97,9 @@
               <!-- <button id="linkButton" class="notext" title="..."> -->
                 <!-- <img src='../../media/1x1.gif' class="link icon21"> -->
               <!-- </button> -->
-              <!-- <button id="runButton" class="notext primary" title="..."> -->
-                <!-- <img src='../../media/1x1.gif' class="run icon21"> -->
-              <!-- </button> -->
+               <button id="runButton" class="notext primary" title="...">
+                 <img src='../../media/1x1.gif' class="run icon21">
+               </button>
             </td>
           </tr>
         </table>
@@ -119,9 +120,9 @@
 
   <xml id="toolbox" style="display: none">
     <category name="VR functions" colour="270">
-      <block type="move_object"></block>
-      <block type="set_color"></block>
-
+      <block type="move_object_direction"></block>
+        <block type="set_color"></block>
+        <block type="create_object"></block>
     </category>
     <category name="{catLogic}" colour="210">
       <block type="controls_if"></block>
@@ -130,7 +131,6 @@
       <block type="logic_negate"></block>
       <block type="logic_boolean"></block>
       <block type="logic_null"></block>
-      <block type="logic_ternary"></block>
     </category>
     <category name="{catLoops}" colour="120">
       <block type="controls_repeat_ext">
@@ -158,7 +158,7 @@
           </shadow>
         </value>
       </block>
-      <block type="controls_flow_statements"></block>
+
     </category>
     <category name="{catMath}" colour="230">
       <block type="math_number"></block>
@@ -210,6 +210,7 @@
     var ground, texture, scene, controls, effect, camera ;
     var audioListener, playList;
     var CANVAS_SIZE = 400;
+    var prevTime = 0;
     //background
     //mini container
     container = document.getElementById('canvas_special');
@@ -255,6 +256,7 @@
         camera.updateMatrixWorld();
         effect.render(scene, camera);
         vrDisplay.requestAnimationFrame(animate);
+        TWEEN.update( );
     }
     function setCameraControls(){
         camera = new THREE.PerspectiveCamera( 35, CANVAS_SIZE / CANVAS_SIZE, 1, 10000 );

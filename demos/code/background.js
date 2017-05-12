@@ -19,7 +19,7 @@ function addBackground(){
     ];
 
     // Create a large cube
-    var mesh = new THREE.Mesh( new THREE.BoxGeometry( 2000, 2000, 2000, 1, 1, 1 ), new THREE.MeshFaceMaterial( materials ) );
+    var mesh = new THREE.Mesh( new THREE.BoxGeometry( 500, 500, 500, 1, 1, 1 ), new THREE.MeshFaceMaterial( materials ) );
 
     // Set the x scale to be -1, this will turn the cube inside out
     mesh.scale.set(-1,1,1);

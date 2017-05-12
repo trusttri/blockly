@@ -421,7 +421,7 @@ Code.init = function() {
 
   // Code.bindClick('trashButton',
       // function() {Code.discard(); Code.renderContent();});
-  // Code.bindClick('runButton', Code.runJS);
+  Code.bindClick('runButton', Code.runJS);
   //Disable the link button if page isn't backed by App Engine storage.
   // var linkButton = document.getElementById('linkButton');
   // if ('BlocklyStorage' in window) {
@@ -441,6 +441,9 @@ Code.init = function() {
         function(name_) {return function() {Code.tabClick(name_);};}(name));
   }
   onresize();
+
+  var svg = Code.workspace.getParentSvg();
+  svg.setAttribute('width', '600px');
   Blockly.svgResize(Code.workspace);
 
   // Lazy-load the syntax-highlighting.
@@ -497,6 +500,8 @@ Code.initLanguage = function() {
  * Just a quick and dirty eval.  Catch infinite loops.
  */
 Code.runJS = function() {
+
+
   Blockly.JavaScript.INFINITE_LOOP_TRAP = '  checkTimeout();\n';
   var timeouts = 0;
   var checkTimeout = function() {
@@ -507,7 +512,9 @@ Code.runJS = function() {
   var code = Blockly.JavaScript.workspaceToCode(Code.workspace);
   Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
   try {
-    eval(code);
+      //for vr
+      prevTime = 0;
+      eval(code);
   } catch (e) {
     alert(MSG['badCode'].replace('%1', e));
   }

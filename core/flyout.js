@@ -219,7 +219,7 @@ Blockly.Flyout.prototype.MARGIN = Blockly.Flyout.prototype.CORNER_RADIUS;
  * @const {number}
  */
 //Blockly.Flyout.prototype.GAP_X = Blockly.Flyout.prototype.MARGIN * 3;
-Blockly.Flyout.prototype.GAP_X = Blockly.Flyout.prototype.MARGIN * 9;
+Blockly.Flyout.prototype.GAP_X = Blockly.Flyout.prototype.MARGIN * 13;
 
 /**
  * Gap between items in vertical flyouts. Can be overridden with the "sep"
@@ -234,7 +234,7 @@ Blockly.Flyout.prototype.GAP_Y = Blockly.Flyout.prototype.MARGIN * 9;
  * @type {number}
  * @const
  */
-Blockly.Flyout.prototype.SCROLLBAR_PADDING = 10;
+Blockly.Flyout.prototype.SCROLLBAR_PADDING = 5;
 
 /**
  * Width of flyout.
@@ -403,8 +403,10 @@ Blockly.Flyout.prototype.getMetrics_ = function() {
     var optionBox = {height: 0, y: 0, width: 0, x: 0};
   }
 
-  var absoluteTop = this.SCROLLBAR_PADDING + 10;
-  var absoluteLeft = this.SCROLLBAR_PADDING;
+  // var absoluteTop = this.SCROLLBAR_PADDING;
+  // var absoluteLeft = this.SCROLLBAR_PADDING;
+    var absoluteTop = 72;
+    var absoluteLeft = 7;
   if (this.horizontalLayout_) {
     if (this.toolboxPosition_ == Blockly.TOOLBOX_AT_BOTTOM) {
       absoluteTop = 0;
@@ -771,6 +773,9 @@ Blockly.Flyout.prototype.show = function(xmlList) {
         }
         contents.push({type: 'block', block: curBlock});
         var gap = parseInt(xml.getAttribute('gap'), 10);
+        if(gap < 50){
+            gap = 100;
+        }
         gaps.push(isNaN(gap) ? default_gap : gap);
       } else if (xml.tagName.toUpperCase() == 'SEP') {
         // Change the gap between two blocks.
