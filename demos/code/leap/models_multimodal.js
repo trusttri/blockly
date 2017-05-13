@@ -22,8 +22,8 @@
 
 	Control.prototype.getHoveringPlace = function(cursorPosition){
 		var currentY = cursorPosition[1];
-		var DRAWER_BOUNDARY =  document.getElementsByClassName('blocklyToolboxDiv')[0].offsetHeight + document.getElementsByClassName('tabmax')[0].offsetHeight;
-		if(currentY <= DRAWER_BOUNDARY){
+		var DRAWER_BOUNDARY =  window.innerHeight - document.getElementsByClassName('blocklyToolboxDiv')[0].offsetHeight;
+		if(currentY >= DRAWER_BOUNDARY){
 			return "drawer";
 		}
 		return "viewer";
@@ -84,7 +84,7 @@
 
                 closestBlock.blockSvg.select();
                 if(cursorPosition[2] < 200){
-                    console.log("close");
+
                     this.candidateBlock = closestBlock;
                 }
             }
@@ -96,7 +96,7 @@
         this.candidateBlock = null;
         if(Blockly.mainWorkspace.toolbox_.flyout_.isVisible()){
             if(BLOCK_SELECTED_FOR_MOVE!=null && cursorPosition[2] > 200){
-            	console.log("selected");
+
                 BLOCK_SELECTED_FOR_MOVE.unselectForOtherMove()
             }
 
@@ -108,7 +108,6 @@
 
                         this.candidateBlock = Blockly.mainWorkspace.toolbox_.flyout_.currentBlocks[i];
                         this.candidateBlock.select();
-                        console.log(this.candidateBlock);
                         if(cursorPosition[2] < 80){
 
                             //this.candidateBlock.selectForMove();

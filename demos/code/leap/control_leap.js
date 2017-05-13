@@ -15,13 +15,12 @@ handCursorUpdate = function (hand, frame) {
     var appY = (1 - normalizedPoint[1]) * windowSize[1]
     cursorPosition[0] = appX;
     cursorPosition[1] = appY;
+    console.log(hand.screenPosition())
 }
 
 checkInFlyout = function (cursorPosition) {
     //var DRAWER_BOUNDARY = document.getElementsByClassName('blocklyToolboxDiv')[0].offsetWidth;
-    var DRAWER_BOUNDARY = document.getElementsByClassName('blocklyToolboxDiv')[0].offsetHeight + document.getElementsByClassName('tabmax')[0].offsetHeight;
-    //if(DRAWER_BOUNDARY - 20 <cursorPosition[0] && cursorPosition[0] < Blockly.mainWorkspace.toolbox_.flyout_.width_+200){
-    if (DRAWER_BOUNDARY < cursorPosition[1] && cursorPosition[1] < 650) {
+   if ( cursorPosition[1] > 90) {
         console.log("flyout");
 
         return true;
