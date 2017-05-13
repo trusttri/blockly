@@ -211,13 +211,20 @@
     var ground, texture, scene, controls, effect, camera ;
     var audioListener, playList;
     var prevTime = 0;
+
+    function adjustInterface(){
+        var borderOfTreeRowDiv  = 8;
+        var categoryNum = 5;
+        var treeRowWidth = (window.innerWidth - borderOfTreeRowDiv * categoryNum ) / categoryNum;
+        $('.blocklyTreeRow').css('width', treeRowWidth + 'px');
+        $('.blocklyTreeRow').css('height', window.innerHeight/5.5);
+    }
   $(document).ready(function(){
+      adjustInterface();
       //set up canvas
       CANVAS_WIDTH = window.innerWidth*0.4;
       CANVAS_HEIGHT = (window.innerHeight - ( document.getElementsByClassName('blocklyToolboxDiv')[0].offsetHeight  + document.getElementsByClassName('tabmax')[0].offsetHeight));
       document.getElementById('canvas_special').style.margin = ( document.getElementsByClassName('tabmax')[0].offsetHeight) + "px 0px 0px "+ window.innerWidth*0.6+"px";
-//      document.getElementById('canvas_special').style.width = CANVAS_WIDTH +"px";
-//      document.getElementById('canvas_special').style.height = CANVAS_HEIGHT +"px";
 
 
       //background

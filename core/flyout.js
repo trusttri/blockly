@@ -219,7 +219,7 @@ Blockly.Flyout.prototype.MARGIN = Blockly.Flyout.prototype.CORNER_RADIUS;
  * @const {number}
  */
 //Blockly.Flyout.prototype.GAP_X = Blockly.Flyout.prototype.MARGIN * 3;
-Blockly.Flyout.prototype.GAP_X = Blockly.Flyout.prototype.MARGIN * 13;
+Blockly.Flyout.prototype.GAP_X = Blockly.Flyout.prototype.MARGIN * 24;
 
 /**
  * Gap between items in vertical flyouts. Can be overridden with the "sep"
@@ -1300,11 +1300,13 @@ Blockly.Flyout.prototype.placeNewBlock_ = function(originBlock) {
       targetWorkspace.scrollX / targetWorkspace.scale - targetWorkspace.scrollX;
   xyNew.y +=
       targetWorkspace.scrollY / targetWorkspace.scale - targetWorkspace.scrollY;
+
+  //commented the following out due to jumpy movements of block when first placed
   // If the flyout is collapsible and the workspace can't be scrolled.
-  if (targetWorkspace.toolbox_ && !targetWorkspace.scrollbar) {
-    xyNew.x += targetWorkspace.toolbox_.getWidth() / targetWorkspace.scale;
-    xyNew.y += targetWorkspace.toolbox_.getHeight() / targetWorkspace.scale;
-  }
+  // if (targetWorkspace.toolbox_ && !targetWorkspace.scrollbar) {
+  //   xyNew.x += targetWorkspace.toolbox_.getWidth() / targetWorkspace.scale;
+  //   xyNew.y += targetWorkspace.toolbox_.getHeight() / targetWorkspace.scale;
+  // }
 
   // Move the new block to where the old block is.
   block.moveBy(xyOld.x - xyNew.x, xyOld.y - xyNew.y);
