@@ -20,7 +20,7 @@ Blockly.JavaScript['move_object_time'] = function(block) {
 
 
 Blockly.JavaScript['move_object_direction'] = function(block) {
-    var value_id = Blockly.JavaScript.valueToCode(block, 'id', Blockly.JavaScript.ORDER_ATOMIC);
+    var value_id = Blockly.JavaScript.valueToCode(block, 'ID', Blockly.JavaScript.ORDER_ATOMIC);
     var value_distance = Blockly.JavaScript.valueToCode(block, 'distance', Blockly.JavaScript.ORDER_ATOMIC);
     var dropdown_direction = block.getFieldValue('direction');
     var value_time = Blockly.JavaScript.valueToCode(block, 'time', Blockly.JavaScript.ORDER_ATOMIC);

@@ -326,11 +326,12 @@ function rotateCubeZ(id, r){
     idToObject[id].setZRotation(r);
 }
 
+
 function moveLinear(id, x, y, z, time){
     var obj = idToObject[id];
     var newTween = new TWEEN.Tween(obj).to(time).onUpdate(function(){obj.moveLinear(x, y, z);});
     newTween.delay(prevTime);
-    prevTime += time*2;
+    prevTime += time*2*1000;
     console.log("second");
     console.log(prevTime);
     newTween.start();

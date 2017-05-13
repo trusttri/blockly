@@ -4,7 +4,13 @@
   <meta charset="utf-8">
   <meta name="google" value="notranslate">
   <title>Blockly Demo:</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="stylesheet/style.css">
+  <link rel="stylesheet" href="stylesheet/modal-style.css">
+
+  <!--jQuery 3-->
+  <script src= "https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+  <!--blockly code-->
   <script src="/storage.js"></script>
   <!--<script src="../../blockly_compressed.js"></script>-->
   <!--<script src="../../blocks_compressed.js"></script>-->
@@ -64,11 +70,26 @@
   <script src="label.js"></script>
   <script src="../js/tween.js"></script>
 
-  <!--jQuery 3-->
-  <script src= "https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
 </head>
 <body>
+
+<div id="saveModal" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content">
+    <div class="modal-header">
+      <span class="close">&times;</span>
+      <h2>Set parameter with speech</h2>
+    </div>
+    <div class="modal-body" id="param-content">
+
+    </div>
+    <div class="modal-footer">
+
+    </div>
+  </div>
+
+</div>
 <div id="main-wrapper">
   <!--vr scene-->
   <div id="canvas_special"></div>
@@ -91,15 +112,12 @@
               <span id="speech-variable">
 					( for setting/getting variable )
 				</span>
-              <!-- <button id="trashButton" class="notext" title="..."> -->
-                <!-- <img src='../../media/1x1.gif' class="trash icon21"> -->
-              <!-- </button> -->
-              <!-- <button id="linkButton" class="notext" title="..."> -->
-                <!-- <img src='../../media/1x1.gif' class="link icon21"> -->
-              <!-- </button> -->
                <button id="runButton" class="notext primary" title="...">
                  <img src='../../media/1x1.gif' class="run icon21">
                </button>
+              <button id="speechModalButton" class="notext primary" title="...">
+                speech modal
+              </button>
             </td>
           </tr>
         </table>
@@ -120,8 +138,31 @@
 
   <xml id="toolbox" style="display: none">
     <category name="VR functions" colour="270">
-      <block type="move_object_direction"></block>
-        <block type="set_color"></block>
+      <block type="move_object_direction">
+        <value name="ID">
+          <shadow type="math_number">
+            <field name="NUM">0</field>
+          </shadow>
+        </value>
+        <value name="distance">
+          <shadow type="math_number">
+            <field name="NUM">6</field>
+          </shadow>
+        </value>
+        <value name="time">
+          <shadow type="math_number">
+            <field name="NUM">5</field>
+          </shadow>
+        </value>
+
+      </block>
+        <block type="set_color">
+          <value name="ID">
+            <shadow type="math_number">
+              <field name="NUM">0</field>
+            </shadow>
+          </value>
+        </block>
         <block type="create_object"></block>
     </category>
     <category name="{catLogic}" colour="210">
@@ -201,6 +242,7 @@
 
   </xml>
 </div>
+
 
 <!--div setup for vr scene-->
 <script>
@@ -350,6 +392,34 @@
 
 
 
+<script>
+    addModal();
+    function addModal(){
+        var modal = document.getElementById('myModal');
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function() {
+            modal.style.display = "none";
+        };
+
+        //When the user clicks anywhere outside of the modal, close it
+        //general function for both modals
+        window.onclick = function(event) {
+            var moreModal = document.getElementById('myModal');
+            var saveModal = document.getElementById('saveModal');
+            if (event.target == moreModal) {
+                moreModal.style.display = "none";
+            }else if(event.target == saveModal){
+                saveModal.style.display = "none";
+
+            }
+        };
+    }
+
+</script>
 
 <!-- main wrapper -->
 </body>

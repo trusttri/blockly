@@ -84,7 +84,6 @@
             if(closestBlock!=null){
 			    closestBlock.blockSvg.select();
                 if(cursorPosition[2] < 200){
-
                     this.candidateBlock = closestBlock;
                 }
             }

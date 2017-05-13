@@ -8,6 +8,8 @@ var debouncedProcessSpeech = _.debounce(processSpeech, 500);
 var recognition = new webkitSpeechRecognition();
 recognition.continuous = true;
 recognition.interimResults = true;
+
+
 recognition.onresult = function(event) {
 	console.log(event);
   // Build the interim transcript, so we can process speech faster
@@ -37,7 +39,6 @@ recognition.onresult = function(event) {
   //console.log("processed is")
   //console.log(processed)
   if (processed) {
-	console.log("stopeed recognition");
     recognition.stop();
   }else{
   }

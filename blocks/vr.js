@@ -16,7 +16,7 @@ Blockly.defineBlocksWithJsonArray(
             "args0": [
                 {
                     "type": "input_value",
-                    "name": "id"
+                    "name": "ID"
                 },
                 {
                     "type": "input_value",
@@ -106,7 +106,7 @@ Blockly.defineBlocksWithJsonArray(
 
 Blockly.Blocks['move_object_direction'] = {
     init: function() {
-        this.appendValueInput("id")
+        this.appendValueInput("ID")
             .setCheck(null)
             .appendField("move object ID ");
         this.appendValueInput("distance")

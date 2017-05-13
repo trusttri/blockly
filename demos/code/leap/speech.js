@@ -6,6 +6,32 @@ var testProcessed = false;
 var spokenMove = false;
 var spoken = true;
 
+
+$(document).ready(function(){
+    $('body').on("click", "#speechModalButton",(function(){
+        console.log("hoo button");
+        var modal = document.getElementById('saveModal');
+        modal.style.display = "block";
+
+    }));
+
+
+});
+
+//function for showing modal when user said "parameter"
+var populateModal = function(){
+    var blockSelected = Blockly.selected;
+    var blockName = Blockly.selected.type;
+    var blockStorage = JSON.parse(sessionStorage["blockParameters"]);
+    var blockParameterInfo = blockStorage[blockName];
+    var param = "";
+    blockParamterInfo.forEach(function(param){
+        param += '<div><div id="'+param+'" '>+param+'</div>' + '<div id="setter-'+param+'>'+'</div>';
+    });
+    $('#modal-body').append(param);
+}
+
+
 var processSpeech = function (transcript) {
     // testProcessed = false;
     // var userSaid = function (str, commands) {
