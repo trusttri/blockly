@@ -409,7 +409,7 @@ Blockly.Flyout.prototype.getMetrics_ = function() {
     var absoluteLeft = 0;
   if (this.horizontalLayout_) {
     if (this.toolboxPosition_ == Blockly.TOOLBOX_AT_BOTTOM) {
-      absoluteTop = 95;
+      absoluteTop = 80;
     }
     var viewHeight = this.height_;
     if (this.toolboxPosition_ == Blockly.TOOLBOX_AT_TOP) {
@@ -1404,7 +1404,7 @@ Blockly.Flyout.prototype.reflowHorizontal = function(blocks) {
   flyoutHeight *= this.workspace_.scale;
   flyoutHeight += Blockly.Scrollbar.scrollbarThickness;
   //lengthen and fix flyout's height so users will feel more stability
-  flyoutHeight = 300;
+  flyoutHeight = 200;
   if (this.height_ != flyoutHeight) {
     for (var i = 0, block; block = blocks[i]; i++) {
       var blockHW = block.getHeightWidth();
