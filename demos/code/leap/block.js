@@ -203,8 +203,17 @@ Block.prototype.stopMove = function(){
 
 
 Block.prototype.move = function(cursorPosition){
-    var fingerOffset = [document.getElementsByClassName('blocklyToolboxDiv')[0].offsetWidth, document.getElementById('content_blocks').offsetTop];
-    var processedCursor = [cursorPosition[0] - fingerOffset[0], cursorPosition[1] - fingerOffset[1] ]
+    if((this.blockSvg.previousConnection != null && this.blockSvg.previousConnection.isConnected()) || (this.blockSvg.outputConnection != null && this.blockSvg.outputConnection.isConnected())){
+        this.blockSvg.unplug();
+        this.unplug+=1;
+        console.log("uplugged");
+    }
+
+
+    var layoutOffset = [0, $('.tabmax')[0].offsetHeight];
+    var blockWidth = this.blockSvg.width;
+    var blockHeight = this.blockSvg.height;
+    var processedCursor = [cursorPosition[0] - layoutOffset[0] - blockWidth/2, cursorPosition[1] - layoutOffset[1] - blockHeight/2]
     if(this.dragStart){
         this.blockSvg.dragStartXY_ = this.blockSvg.getRelativeToSurfaceXY();
         this.dragStart = false;
@@ -223,11 +232,6 @@ Block.prototype.move = function(cursorPosition){
     var afterRelativeY = this.blockSvg.getRelativeToSurfaceXY()['y'];
 
     //check for disconnect
-    if((this.blockSvg.previousConnection != null && this.blockSvg.previousConnection.isConnected()) || (this.blockSvg.outputConnection != null && this.blockSvg.outputConnection.isConnected())){
-        console.log(this.unplug);
-        this.blockSvg.unplug();
-        this.unplug+=1;
-    }
 
 
 }
@@ -251,9 +255,7 @@ Blockly.BlockSvg.prototype.addSelectForMove = function() {
 };
 
 Blockly.BlockSvg.prototype.removeSelectForMove = function() {
-    if(this.svgGroup_ != null){
-        Blockly.utils.removeClass(this.svgGroup_, "blocklyLeapSelected")
-    }
+    Blockly.utils.removeClass(this.svgGroup_, "blocklyLeapSelected");
 
 };
 
