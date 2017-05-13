@@ -224,13 +224,12 @@
       //set up canvas
       CANVAS_WIDTH = window.innerWidth*0.4;
       CANVAS_HEIGHT = (window.innerHeight - ( document.getElementsByClassName('blocklyToolboxDiv')[0].offsetHeight  + document.getElementsByClassName('tabmax')[0].offsetHeight));
-      document.getElementById('canvas_special').style.margin = ( document.getElementsByClassName('tabmax')[0].offsetHeight) + "px 0px 0px "+ window.innerWidth*0.6+"px";
+      document.getElementById('canvas_special').style.margin = ($('.tabmax')[0].offsetHeight) + "px 0px 0px "+ window.innerWidth*0.6+"px";
 
 
       //background
       //mini container
       container = document.getElementById('canvas_special');
-      console.log(container);
       Physijs.scripts.worker = 'physijs_worker.js';
       Physijs.scripts.ammo = 'ammo.js';
       var renderer = new THREE.WebGLRenderer();

@@ -437,7 +437,6 @@ Blockly.Flyout.prototype.getMetrics_ = function() {
     absoluteTop: absoluteTop,
     absoluteLeft: absoluteLeft
   };
-  console.log(metrics);
   return metrics;
 };
 

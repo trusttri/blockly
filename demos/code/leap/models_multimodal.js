@@ -63,6 +63,7 @@
         var shortestDistance = 1000;
         var closestBlock = null;
         if(BLOCK_SELECTED_FOR_MOVE!=null && cursorPosition[2] > 80){
+
             BLOCK_SELECTED_FOR_MOVE.unselectForOtherMove()
 
         }
@@ -81,22 +82,19 @@
 
             });
             if(closestBlock!=null){
-
-                closestBlock.blockSvg.select();
+			    closestBlock.blockSvg.select();
                 if(cursorPosition[2] < 200){
 
                     this.candidateBlock = closestBlock;
                 }
             }
         }
-
     }
 
     Control.prototype.hoverOverFlyout = function(cursorPosition){
         this.candidateBlock = null;
         if(Blockly.mainWorkspace.toolbox_.flyout_.isVisible()){
             if(BLOCK_SELECTED_FOR_MOVE!=null && cursorPosition[2] > 200){
-
                 BLOCK_SELECTED_FOR_MOVE.unselectForOtherMove()
             }
 
@@ -118,8 +116,6 @@
                 }
             }
         }
-
-
     }
 
 

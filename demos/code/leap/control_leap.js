@@ -15,17 +15,18 @@ handCursorUpdate = function (hand, frame) {
     var appY = (1 - normalizedPoint[1]) * windowSize[1]
     cursorPosition[0] = appX;
     cursorPosition[1] = appY;
-    console.log(hand.screenPosition())
+    cursorPosition[2] = leapPoint[2];
+
 }
 
 checkInFlyout = function (cursorPosition) {
     //var DRAWER_BOUNDARY = document.getElementsByClassName('blocklyToolboxDiv')[0].offsetWidth;
-   if ( cursorPosition[1] > 90) {
-        console.log("flyout");
+   if ( cursorPosition[1] > window.innerHeight/2) {
+
 
         return true;
     }
-    console.log("viewr");
+
 
     return false;
 }
@@ -164,7 +165,7 @@ leapController = Leap.loop({enableGestures: true}, function (frame) {
 
                     } else {
                         console.log("trying to get from viewr");
-                        //control.getBlockFromViewer(cursorPosition);
+                        control.getBlockFromViewer(cursorPosition);
                     }
 
                 }
