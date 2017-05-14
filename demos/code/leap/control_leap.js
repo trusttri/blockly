@@ -103,8 +103,8 @@ leapController = Leap.loop({enableGestures: true}, function (frame) {
         if (Blockly.mainWorkspace != null && control != null) {
             control.getBlocksPositionInFlyout();
             control.getBlockSectionRange();
+            initializeVariableList();
             init = false;
-            Blockly.mainWorkspace.variableList = [];
 
         }
 
@@ -176,4 +176,7 @@ leapController = Leap.loop({enableGestures: true}, function (frame) {
     }//hand
 
 }).use('screenPosition', {scale: 0.57});
+
+
+
 

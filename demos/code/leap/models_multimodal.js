@@ -43,6 +43,7 @@
 			category_index = 3;
 		}else{
 			category_index = 4;
+            this.getVariableBlocksPosition();
 		}
 		if(category_index != -1){
 			control.chosenDrawer = BLOCK_CATEGORIES[category_index];
@@ -104,11 +105,8 @@
                     if(blocksBoundary[i] < currentX && currentX < blocksBoundary[i+1]){
 
                         this.candidateBlock = Blockly.mainWorkspace.toolbox_.flyout_.currentBlocks[i];
+                        console.log(this.candidateBlock);
                         this.candidateBlock.select();
-                        if(cursorPosition[2] < 80){
-
-                            //this.candidateBlock.selectForMove();
-                        }
 
                         break;
                     }
@@ -168,24 +166,43 @@
 			candidate[0].connect(candidate[1]);
 		}
 	}
-	
+
+	//function that is called whenever the user hovers over the variable
+	//since the user could have made more variables
 	Control.prototype.getVariableBlocksPosition = function(){
-		
-		var blockElements = Blockly.mainWorkspace.toolbox_.flyout_.newCreatedBlocks;
-		blockElements.forEach(function(blockElement){
-				var blockSvg = Blockly.Xml.domToBlock(Blockly.mainWorkspace, blockElement);
+
+		if(control.chosenDrawer =="Variables"){
+            //empty
+            FLYOUT_BLOCKS_WIDTHS["Variables"] = [];
+            FLYOUT_RANGE["Variables"] = [];
+
+            //first get the blocks' widths
+            var blockElements = Blockly.mainWorkspace.toolbox_.flyout_.currentBlocks
+            for(var i=0; i<blockElements.length; i++){
+                var blockSvg = blockElements[i];
 				var width = blockSvg.width;
-				blockSvg.dispose();
 				FLYOUT_BLOCKS_WIDTHS["Variables"].push(width);
-		});
-		var precedingBound = 0;
-		var positions = FLYOUT_BLOCKS_WIDTHS["Variables"];
-		FLYOUT_RANGE["Variables"].push(-50);
-		positions.forEach(function(blockLength){
-			var thisBound = 8*2+blockLength+precedingBound
-			FLYOUT_RANGE["Variables"].push(thisBound);
-			precedingBound = thisBound;
-		});
+            }
+
+            //not get the range of each block
+            var precedingBound = 0;
+			var count = 0;
+            var offset = 121 + 8 + Blockly.Flyout.prototype.GAP_X; //have to ignore the big button on the left
+            var positions = FLYOUT_BLOCKS_WIDTHS["Variables"];
+            FLYOUT_RANGE["Variables"].push(-50);
+            positions.forEach(function(blockLength){
+                var thisBound;
+                if(count == 0){
+                    thisBound = offset + blockLength + Blockly.Flyout.prototype.GAP_X*0.8/2;
+                }else{
+                    thisBound = precedingBound + blockLength + Blockly.Flyout.prototype.GAP_X*0.8;
+                }
+                FLYOUT_RANGE["Variables"].push(thisBound);
+                precedingBound = thisBound;
+                count += 1;
+            });
+		}
+
 	}
 	
 	Control.prototype.getBlocksPositionInFlyout = function(){
@@ -194,10 +211,12 @@
 			var blockElements = flyouts[i].blocks;
 			if(typeof(blockElements) == "object"){
                 blockElements.forEach(function(blockElement){
-                    var blockSvg = Blockly.Xml.domToBlock(Blockly.mainWorkspace, blockElement);
-                    var width = blockSvg.width;
-                    blockSvg.dispose();
-                    FLYOUT_BLOCKS_WIDTHS[BLOCK_CATEGORIES[i]].push(width);
+
+					var blockSvg = Blockly.Xml.domToBlock(Blockly.mainWorkspace, blockElement);
+					var width = blockSvg.width;
+					blockSvg.dispose();
+					FLYOUT_BLOCKS_WIDTHS[BLOCK_CATEGORIES[i]].push(width);
+
                 });
 			}
 		}		

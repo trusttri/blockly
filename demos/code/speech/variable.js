@@ -32,3 +32,6 @@ createVariable = function(variableName){
     Blockly.mainWorkspace.createVariable(variableName)
 }
 
+initializeVariableList = function(){
+    Blockly.mainWorkspace.variableList = ["foo"];
+}

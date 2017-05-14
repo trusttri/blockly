@@ -87,7 +87,7 @@ Blockly.defineBlocksWithJsonArray(
                 },
                 {
                     "type": "field_colour",
-                    "name": "NAME",
+                    "name": "color",
                     "colour": "#ff0000"
                 }
             ],
@@ -149,7 +149,7 @@ Blockly.Blocks['set_color'] = {
             .appendField("set object ID");
         this.appendDummyInput()
             .appendField("'s color  to ")
-            .appendField(new Blockly.FieldColour("#ff0000"), "NAME");
+            .appendField(new Blockly.FieldColour("#ff0000"), "color");
         this.setInputsInline(true);
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
